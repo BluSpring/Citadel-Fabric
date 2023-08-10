@@ -5,15 +5,20 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "citadel.refmap.json",
   "mixins": [
+    "BackupConfirmScreenAccessor",
     "BiomeSourceMixin",
     "ChunkGeneratorMixin",
+    "ConfirmScreenAccessor",
     "LevelMixin",
     "LivingEntityMixin",
+    "MinecraftAccessor",
     "MinecraftServerMixin",
     "MultiNoiseBiomeSourceMixin",
     "NoiseBasedChunkGeneratorMixin",
     "ServerLevelMixin",
-    "SmithingMenuMixin"
+    "SmithingMenuMixin",
+    "StructureTemplatePoolAccessor",
+    "TimerAccessor"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",
@@ -23,7 +28,8 @@
     "client.LevelRendererMixin",
     "client.LivingEntityRendererMixin",
     "client.SoundEngineMixin",
-    "client.TitleScreenMixin"
+    "client.TitleScreenMixin",
+    "fabric.AbstractWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1

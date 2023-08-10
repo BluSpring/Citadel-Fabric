@@ -3,11 +3,11 @@ package com.github.alexthe666.citadel.client.model.container;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class JsonUtils
         return !isJsonPrimitive(json, memberName) ? false : json.getAsJsonPrimitive(memberName).isString();
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static boolean isString(JsonElement json)
     {
         return !json.isJsonPrimitive() ? false : json.getAsJsonPrimitive().isString();
@@ -33,7 +33,7 @@ public class JsonUtils
         return !json.isJsonPrimitive() ? false : json.getAsJsonPrimitive().isNumber();
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static boolean isBoolean(JsonObject json, String memberName)
     {
         return !isJsonPrimitive(json, memberName) ? false : json.getAsJsonPrimitive(memberName).isBoolean();

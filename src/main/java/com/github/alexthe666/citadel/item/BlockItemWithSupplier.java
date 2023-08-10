@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.item;
 
+import io.github.fabricators_of_create.porting_lib.util.RegistryObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -8,7 +9,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraftforge.registries.RegistryObject;
 
 public class BlockItemWithSupplier extends BlockItem {
 

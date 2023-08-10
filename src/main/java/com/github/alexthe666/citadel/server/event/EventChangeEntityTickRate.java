@@ -1,11 +1,17 @@
 package com.github.alexthe666.citadel.server.event;
 
+import dev.architectury.event.Event;
+import dev.architectury.event.EventFactory;
+import dev.architectury.event.EventResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 
-@Cancelable
-public class EventChangeEntityTickRate extends Event {
+public class EventChangeEntityTickRate {
+    public static final Event<ChangeEntityTickRateCallback> EVENT = EventFactory.createEventResult();
+
+    public interface ChangeEntityTickRateCallback {
+        EventResult onChangeEntityTickRate(EventChangeEntityTickRate event);
+    }
+
     private Entity entity;
     private float targetTickRate;
 

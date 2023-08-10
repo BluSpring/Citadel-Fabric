@@ -1,5 +1,7 @@
 package com.github.alexthe666.citadel.client.tick;
 
+import com.github.alexthe666.citadel.mixin.MinecraftAccessor;
+import com.github.alexthe666.citadel.mixin.TimerAccessor;
 import com.github.alexthe666.citadel.server.tick.TickRateTracker;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
 import net.minecraft.client.Minecraft;
@@ -42,7 +44,7 @@ public class ClientTickRateTracker extends TickRateTracker {
 
     public void masterTick(){
         super.masterTick();
-        client.timer.msPerTick = getClientTickRate();
+        ((TimerAccessor) ((MinecraftAccessor) client).getTimer()).setMsPerTick(getClientTickRate());
     }
 
     public float getClientTickRate(){

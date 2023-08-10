@@ -5,6 +5,9 @@ import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.fabricators_of_create.porting_lib.util.client.Slider;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
@@ -13,16 +16,14 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
 
-@OnlyIn(Dist.CLIENT)
+@SuppressWarnings("removal")
+@Environment(EnvType.CLIENT)
 public class GuiCitadelPatreonConfig extends OptionsSubScreen {
 
-    private ForgeSlider distSlider;
-    private ForgeSlider speedSlider;
-    private ForgeSlider heightSlider;
+    private Slider distSlider;
+    private Slider speedSlider;
+    private Slider heightSlider;
     private Button changeButton;
     private float rotateDist;
     private float rotateSpeed;
@@ -78,27 +79,27 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
         this.addRenderableWidget(new Button(i - 100, j+ 120, 200, 20, CommonComponents.GUI_DONE, (p_213079_1_) -> {
             this.minecraft.setScreen(this.lastScreen);
         }));
-        this.addRenderableWidget(distSlider = new ForgeSlider(i - 150 / 2 - 25, j + 30, 150, 20, Component.translatable("citadel.gui.orbit_dist").append(Component.translatable( ": ")), Component.translatable( ""), 0.125F, 5F, rotateDist, 0.1D, 1, true){
+        this.addRenderableWidget(distSlider = new Slider(i - 150 / 2 - 25, j + 30, 150, 20, Component.translatable("citadel.gui.orbit_dist").append(Component.literal( ": ")), Component.literal( ""), 0.125F, 5F, rotateDist, false, true, btn -> {}){
             @Override
-            protected void applyValue() {
+            public void updateSlider() {
                 GuiCitadelPatreonConfig.this.setSliderValue(0, (float)getValue());
             }
         });
         this.addRenderableWidget(new Button(i - 150 / 2 + 135, j+ 30, 40, 20,  Component.translatable("citadel.gui.reset"), (p_213079_1_) -> {
             this.setSliderValue(0, 0.4F);
         }));
-        this.addRenderableWidget(speedSlider = new ForgeSlider(i - 150 / 2 - 25, j + 60, 150, 20, Component.translatable("citadel.gui.orbit_speed").append(Component.translatable( ": ")), Component.translatable( ""), 0.0F, 5F, rotateSpeed, 0.1D, 2, true){
+        this.addRenderableWidget(speedSlider = new Slider(i - 150 / 2 - 25, j + 60, 150, 20, Component.translatable("citadel.gui.orbit_speed").append(Component.literal( ": ")), Component.literal( ""), 0.0F, 5F, rotateSpeed, false, true, (btn) -> {}){
             @Override
-            protected void applyValue() {
+            public void updateSlider() {
                 GuiCitadelPatreonConfig.this.setSliderValue(1, (float)getValue());
             }
         });
         this.addRenderableWidget(new Button(i - 150 / 2 + 135, j+ 60, 40, 20,  Component.translatable("citadel.gui.reset"), (p_213079_1_) -> {
             this.setSliderValue(1, 1F / 5F);
         }));
-        this.addRenderableWidget(heightSlider = new ForgeSlider(i - 150 / 2 - 25, j + 90, 150, 20, Component.translatable("citadel.gui.orbit_height").append(Component.translatable( ": ")), Component.translatable( ""), 0.0F, 2F, rotateHeight, 0.1D, 2, true){
+        this.addRenderableWidget(heightSlider = new Slider(i - 150 / 2 - 25, j + 90, 150, 20, Component.translatable("citadel.gui.orbit_height").append(Component.literal( ": ")), Component.literal( ""), 0.0F, 2F, rotateHeight, false, true, (btn) -> {}){
             @Override
-            protected void applyValue() {
+            public void updateSlider() {
                 GuiCitadelPatreonConfig.this.setSliderValue(2, (float)getValue());
             }
         });

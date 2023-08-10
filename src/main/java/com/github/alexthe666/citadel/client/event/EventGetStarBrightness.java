@@ -1,13 +1,20 @@
 package com.github.alexthe666.citadel.client.event;
 
+import dev.architectury.event.Event;
+import dev.architectury.event.EventFactory;
+import dev.architectury.event.EventResult;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.Event;
 
-@OnlyIn(Dist.CLIENT)
-@Event.HasResult
-public class EventGetStarBrightness extends Event {
+@Environment(EnvType.CLIENT)
+public class EventGetStarBrightness {
+    public static final Event<GetStarBrightnessCallback> EVENT = EventFactory.createEventResult();
+
+    public interface GetStarBrightnessCallback {
+        EventResult onGetStarBrightness(EventGetStarBrightness event);
+    }
+
     private ClientLevel clientLevel;
     private float brightness;
     private float partialTicks;

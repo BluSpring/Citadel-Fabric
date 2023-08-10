@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel.server.generation;
 
 import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.mixin.StructureTemplatePoolAccessor;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.Registry;
@@ -29,16 +30,17 @@ public class VillageHouseManager {
 
     public static StructureTemplatePool addToPool(StructureTemplatePool pool, StructurePoolElement element, int weight) {
         if (weight > 0) {
+            var acc = ((StructureTemplatePoolAccessor) pool);
             if (pool != null) {
-                ObjectArrayList<StructurePoolElement> templates = new ObjectArrayList<>(pool.templates);
+                ObjectArrayList<StructurePoolElement> templates = new ObjectArrayList<>(acc.getTemplates());
                 if(!templates.contains(element)) {
                     for (int i = 0; i < weight; i++) {
                         templates.add(element);
                     }
-                    List<Pair<StructurePoolElement, Integer>> rawTemplates = new ArrayList(pool.rawTemplates);
+                    List<Pair<StructurePoolElement, Integer>> rawTemplates = new ArrayList(acc.getRawTemplates());
                     rawTemplates.add(new Pair<>(element, weight));
-                    pool.templates = templates;
-                    pool.rawTemplates = rawTemplates;
+                    acc.setTemplates(templates);
+                    acc.setRawTemplates(rawTemplates);
                     Citadel.LOGGER.info("Added to " + pool.getName() + " structure pool");
                 }
             }

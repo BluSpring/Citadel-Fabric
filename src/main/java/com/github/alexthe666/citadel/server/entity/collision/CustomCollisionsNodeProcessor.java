@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.server.entity.collision;
 
+import net.fabricmc.fabric.api.registry.LandPathNodeTypesRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -49,7 +50,7 @@ public class CustomCollisionsNodeProcessor extends WalkNodeEvaluator {
 
     protected static BlockPathTypes getNodes(BlockGetter p_237238_0_, BlockPos p_237238_1_) {
         BlockState blockstate = p_237238_0_.getBlockState(p_237238_1_);
-        BlockPathTypes type = blockstate.getBlockPathType(p_237238_0_, p_237238_1_, null);
+        BlockPathTypes type = LandPathNodeTypesRegistry.getPathNodeType(blockstate, p_237238_0_, p_237238_1_, false);
         if (type != null) return type;
         Block block = blockstate.getBlock();
         Material material = blockstate.getMaterial();

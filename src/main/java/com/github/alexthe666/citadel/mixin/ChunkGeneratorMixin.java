@@ -10,8 +10,6 @@ import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,8 +24,8 @@ public class ChunkGeneratorMixin {
         WeightedRandomList<MobSpawnSettings.SpawnerData> biomeSpawns = biome.value().getMobSettings().getMobs(mobCategory);
         if(biomeSpawns != cir.getReturnValue()){
             EventMergeStructureSpawns event = new EventMergeStructureSpawns(structureManager, pos, mobCategory, cir.getReturnValue(), biomeSpawns);
-            MinecraftForge.EVENT_BUS.post(event);
-            if(event.getResult() == Event.Result.ALLOW){
+            var result = EventMergeStructureSpawns.EVENT.invoker().onMergeStructureSpawns(event);
+            if(result.isEmpty() || result.isTrue()){
                 cir.setReturnValue(event.getStructureSpawns());
             }
         }

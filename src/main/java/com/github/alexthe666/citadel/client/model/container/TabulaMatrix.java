@@ -2,12 +2,12 @@ package com.github.alexthe666.citadel.client.model.container;
 
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Stack;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class TabulaMatrix {
     public Stack<Matrix4f> matrixStack;
 

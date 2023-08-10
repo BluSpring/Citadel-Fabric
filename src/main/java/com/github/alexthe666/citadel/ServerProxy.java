@@ -2,48 +2,28 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.server.entity.IDancesToJukebox;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
-import com.github.alexthe666.citadel.server.event.EventMergeStructureSpawns;
-import com.github.alexthe666.citadel.server.event.EventReplaceBiome;
-import com.github.alexthe666.citadel.server.generation.SurfaceRulesManager;
-import com.github.alexthe666.citadel.server.world.CitadelServerData;
-import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
-import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
+import com.github.alexthe666.citadel.server.world.CitadelServerData;
+import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ServerProxy {
 
 
     public ServerProxy() {
+    }
+
+    public void initEvents() {
     }
 
     public void onPreInit() {
@@ -76,12 +56,14 @@ public class ServerProxy {
     }
 
     public void onClientInit() {
+        var phase = new ResourceLocation("citadel", "late");
+        ServerTickEvents.START_SERVER_TICK.addPhaseOrdering(Event.DEFAULT_PHASE, phase);
+        ServerTickEvents.START_SERVER_TICK.register(phase, this::onServerTick);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onServerTick(TickEvent.ServerTickEvent event) {
-        ServerTickRateTracker tickRateTracker = CitadelServerData.get(event.getServer()).getOrCreateTickRateTracker();
-        if (event.getServer() instanceof ModifiableTickRateServer modifiableServer && event.phase == TickEvent.Phase.START) {
+    public void onServerTick(MinecraftServer server) {
+        ServerTickRateTracker tickRateTracker = CitadelServerData.get(server).getOrCreateTickRateTracker();
+        if (server instanceof ModifiableTickRateServer modifiableServer) {
             long l = tickRateTracker.getServerTickLengthMs();
             if (l == MinecraftServer.MS_PER_TICK) {
                 modifiableServer.resetGlobalTickLengthMs();
@@ -117,8 +99,8 @@ public class ServerProxy {
                 return false;
             } else if (!tracker.hasNormalTickRate(entity)) {
                 EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-                MinecraftForge.EVENT_BUS.post(event);
-                if (event.isCanceled()) {
+                var result = EventChangeEntityTickRate.EVENT.invoker().onChangeEntityTickRate(event);
+                if (result.isFalse()) {
                     return true;
                 } else {
                     tracker.addTickBlockedEntity(entity);

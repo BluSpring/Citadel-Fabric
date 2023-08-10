@@ -6,8 +6,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -39,9 +37,9 @@ public abstract class TitleScreenMixin extends Screen {
     protected void citadel_preRenderSplashText(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         poseStack.pushPose();
         EventRenderSplashText.Pre event = new EventRenderSplashText.Pre(splash, poseStack, (TitleScreen) (Screen) this, partialTicks, splashTextColor);
-        MinecraftForge.EVENT_BUS.post(event);
+        var result = EventRenderSplashText.PRE.invoker().onPreRenderSplashText(event);
 
-        if (event.getResult() == Event.Result.ALLOW) {
+        if (result.isEmpty() || result.isTrue()) {
             splash = event.getSplashText();
             splashTextColor = event.getSplashTextColor();
         }
@@ -58,7 +56,7 @@ public abstract class TitleScreenMixin extends Screen {
     )
     protected void citadel_postRenderSplashText(PoseStack poseStack, int mouseX, int mouseY, float partialTicks, CallbackInfo ci) {
         EventRenderSplashText.Post event = new EventRenderSplashText.Post(splash, poseStack, (TitleScreen) (Screen) this, partialTicks);
-        MinecraftForge.EVENT_BUS.post(event);
+        EventRenderSplashText.POST.invoker().onPostRenderSplashText(event);
         poseStack.popPose();
     }
 

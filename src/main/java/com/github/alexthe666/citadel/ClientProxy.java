@@ -2,36 +2,38 @@ package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
-import com.github.alexthe666.citadel.client.event.*;
+import com.github.alexthe666.citadel.client.event.EventRenderSplashText;
 import com.github.alexthe666.citadel.client.game.Tetris;
-import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
-import com.github.alexthe666.citadel.client.render.CitadelLecternRenderer;
-import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
-import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelBook;
+import com.github.alexthe666.citadel.client.gui.GuiCitadelCapesConfig;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelPatreonConfig;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
+import com.github.alexthe666.citadel.client.render.CitadelLecternRenderer;
+import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
+import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.client.rewards.SpaceStationPatreonRenderer;
-import com.github.alexthe666.citadel.client.texture.CitadelTextureManager;
-import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
 import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
-import com.github.alexthe666.citadel.client.video.Video;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemWithHoverAnimation;
+import com.github.alexthe666.citadel.mixin.BackupConfirmScreenAccessor;
+import com.github.alexthe666.citadel.mixin.ConfirmScreenAccessor;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.client.ClientTooltipEvent;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderPlayerEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.impl.client.screen.ScreenExtensions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.*;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.blockentity.LecternRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -41,24 +43,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientProxy extends ServerProxy {
     public static TabulaModel CITADEL_MODEL;
     public static boolean hideFollower = false;
@@ -83,23 +77,46 @@ public class ClientProxy extends ServerProxy {
         CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station"), new int[]{}));
         CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
         CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(new ResourceLocation("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
+
+        ScreenEvents.BEFORE_INIT.register(((client, screen, scaledWidth, scaledHeight) -> {
+            onOpenGui(screen);
+        }));
+
+        ScreenEvents.AFTER_INIT.register(((client, screen, scaledWidth, scaledHeight) -> {
+            screenOpen(screen);
+
+            ScreenEvents.afterRender(screen).register(((screen1, matrices, mouseX, mouseY, tickDelta) -> {
+                screenRender(screen1, matrices, tickDelta);
+            }));
+        }));
+
+        RenderPlayerEvents.POST.register(((player, renderer, partialTick, poseStack, buffer, packedLight) -> {
+            playerRender(player, poseStack, buffer, packedLight, partialTick);
+        }));
+
+        EventRenderSplashText.PRE.register(this::renderSplashTextBefore);
+
+        ClientTickEvents.START_CLIENT_TICK.register((client -> {
+            clientTick();
+        }));
+
+        ClientTooltipEvent.ITEM.register(this::renderTooltipColor);
     }
 
-    @SubscribeEvent
-    public void screenOpen(ScreenEvent.Init event) {
-        if (event.getScreen() instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
+    public void screenOpen(Screen screen) {
+        if (screen instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
            try{
                String username = Minecraft.getInstance().player.getName().getString();
                int height = -20;
                if (Citadel.PATREONS.contains(username)) {
-                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
-                       Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(event.getScreen(), Minecraft.getInstance().options));
+                   ScreenExtensions.getExtensions(screen).fabric_getButtons().add(new Button(screen.width / 2 - 100, screen.height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                       Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(screen, Minecraft.getInstance().options));
                    }));
                    height += 25;
                }
                if (!CitadelCapes.getCapesFor(Minecraft.getInstance().player.getUUID()).isEmpty()) {
-                   event.addListener(new Button(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
-                       Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(event.getScreen(), Minecraft.getInstance().options));
+                   ScreenExtensions.getExtensions(screen).fabric_getButtons().add(new Button(screen.width / 2 - 100, screen.height / 6 + 150 + height, 200, 20, Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> {
+                       Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(screen, Minecraft.getInstance().options));
                    }));
                    height += 25;
                }
@@ -109,22 +126,19 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
-    @SubscribeEvent
-    public void screenRender(ScreenEvent.Render event) {
-        if(event.getScreen() instanceof TitleScreen && CitadelConstants.isAprilFools()) {
+    public void screenRender(Screen screen, PoseStack poseStack, float partialTick) {
+        if(screen instanceof TitleScreen && CitadelConstants.isAprilFools()) {
             if(aprilFoolsTetrisGame == null){
                 aprilFoolsTetrisGame = new Tetris();
             }else{
-                aprilFoolsTetrisGame.render((TitleScreen) event.getScreen(), event.getPoseStack(), event.getPartialTick());
+                aprilFoolsTetrisGame.render((TitleScreen) screen, poseStack, partialTick);
             }
         }
     }
 
-    @SubscribeEvent
-    public void playerRender(RenderPlayerEvent.Post event) {
-        PoseStack matrixStackIn = event.getPoseStack();
-        String username = event.getEntity().getName().getString();
-        if (!event.getEntity().isModelPartShown(PlayerModelPart.CAPE)) {
+    public void playerRender(Player player, PoseStack matrixStackIn, MultiBufferSource bufferSource, int packedLight, float partialTick) {
+        String username = player.getName().getString();
+        if (!player.isModelPartShown(PlayerModelPart.CAPE)) {
             return;
         }
         if (Citadel.PATREONS.contains(username)) {
@@ -136,31 +150,28 @@ public class ClientProxy extends ServerProxy {
                     float distance = tag.contains("CitadelRotateDistance") ? tag.getFloat("CitadelRotateDistance") : 2F;
                     float speed = tag.contains("CitadelRotateSpeed") ? tag.getFloat("CitadelRotateSpeed") : 1;
                     float height = tag.contains("CitadelRotateHeight") ? tag.getFloat("CitadelRotateHeight") : 1F;
-                    renderer.render(matrixStackIn, event.getMultiBufferSource(), event.getPackedLight(), event.getPartialTick(), event.getEntity(), distance, speed, height);
+                    renderer.render(matrixStackIn, bufferSource, packedLight, partialTick, player, distance, speed, height);
                 }
             }
         }
     }
 
-    @SubscribeEvent
-    public void onOpenGui(ScreenEvent.Opening event) {
+    public void onOpenGui(Screen screen) {
         if (ServerConfig.skipWarnings) {
             try{
-                if (event.getScreen() instanceof BackupConfirmScreen) {
-                    BackupConfirmScreen confirmBackupScreen = (BackupConfirmScreen) event.getScreen();
+                if (screen instanceof BackupConfirmScreen confirmBackupScreen) {
                     String name = "";
                     MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
 
                     if (confirmBackupScreen.getTitle().equals(title)) {
-                        confirmBackupScreen.listener.proceed(false, true);
+                        ((BackupConfirmScreenAccessor) confirmBackupScreen).getListener().proceed(false, true);
                     }
                 }
-                if (event.getScreen() instanceof ConfirmScreen) {
-                    ConfirmScreen confirmScreen = (ConfirmScreen) event.getScreen();
+                if (screen instanceof ConfirmScreen confirmScreen) {
                     MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
                     String name = "";
                     if (confirmScreen.getTitle().equals(title)) {
-                        confirmScreen.callback.accept(true);
+                        ((ConfirmScreenAccessor) confirmScreen).getCallback().accept(true);
                     }
                 }
             }catch (Exception e){
@@ -170,10 +181,8 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
-    @SubscribeEvent
-    public void renderSplashTextBefore(EventRenderSplashText.Pre event) {
+    public EventResult renderSplashTextBefore(EventRenderSplashText.Pre event) {
         if(CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null){
-            event.setResult(Event.Result.ALLOW);
             float hue = (System.currentTimeMillis() % 6000) / 6000f;
             event.getPoseStack().mulPose(Vector3f.ZP.rotationDegrees((float)Math.sin(hue * Math.PI) * 10));
             if(!aprilFoolsTetrisGame.isStarted()){
@@ -183,16 +192,19 @@ public class ClientProxy extends ServerProxy {
             }
             int rainbow = Color.HSBtoRGB(hue, 0.6f, 1);
             event.setSplashTextColor(rainbow);
+
+            return EventResult.interruptTrue();
         }
+
+        return EventResult.pass();
     }
 
-    @SubscribeEvent
-    public void clientTick(TickEvent.ClientTickEvent event) {
-        if(event.phase == TickEvent.Phase.START && !isGamePaused()){
+    public void clientTick() {
+        if(!isGamePaused()){
             ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
             tickMouseOverAnimations();
         }
-        if(event.type == TickEvent.Type.CLIENT && event.phase == TickEvent.Phase.START && !isGamePaused() && CitadelConstants.isAprilFools()) {
+        if(!isGamePaused() && CitadelConstants.isAprilFools()) {
             if(aprilFoolsTetrisGame != null){
                 if(Minecraft.getInstance().screen instanceof TitleScreen){
                     aprilFoolsTetrisGame.tick();
@@ -233,10 +245,9 @@ public class ClientProxy extends ServerProxy {
         lastHoveredItem = null;
     }
 
-    @SubscribeEvent
-    public void renderTooltipColor(RenderTooltipEvent.Color event) {
-        if (event.getItemStack().getItem() instanceof ItemWithHoverAnimation hoverOver && hoverOver.canHoverOver(event.getItemStack())) {
-            lastHoveredItem = event.getItemStack();
+    public void renderTooltipColor(ItemStack stack, List<Component> lines, TooltipFlag flag) {
+        if (stack.getItem() instanceof ItemWithHoverAnimation hoverOver && hoverOver.canHoverOver(stack)) {
+            lastHoveredItem = stack;
         } else {
             lastHoveredItem = null;
         }
@@ -312,8 +323,10 @@ public class ClientProxy extends ServerProxy {
             return false;
         }else if(!tracker.hasNormalTickRate(entity)){
             EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-            MinecraftForge.EVENT_BUS.post(event);
-            if(event.isCanceled()){
+
+            var result = EventChangeEntityTickRate.EVENT.invoker().onChangeEntityTickRate(event);
+
+            if(result.isFalse()){
                 return true;
             }else{
                 tracker.addTickBlockedEntity(entity);
