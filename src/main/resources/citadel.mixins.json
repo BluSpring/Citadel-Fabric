@@ -19,7 +19,8 @@
     "ServerLevelMixin",
     "SmithingMenuMixin",
     "StructureTemplatePoolAccessor",
-    "TimerAccessor"
+    "TimerAccessor",
+    "fabric.ItemMixin"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",
@@ -31,7 +32,8 @@
     "client.SoundEngineMixin",
     "client.TitleScreenMixin",
     "fabric.AbstractWidgetMixin",
-    "fabric.BlockRenderDispatcherMixin"
+    "fabric.BlockRenderDispatcherMixin",
+    "fabric.HumanoidArmorLayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
