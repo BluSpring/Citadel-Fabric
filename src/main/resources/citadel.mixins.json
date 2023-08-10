@@ -9,6 +9,7 @@
     "BiomeSourceMixin",
     "ChunkGeneratorMixin",
     "ConfirmScreenAccessor",
+    "ItemRendererAccessor",
     "LevelMixin",
     "LivingEntityMixin",
     "MinecraftAccessor",
@@ -29,7 +30,8 @@
     "client.LivingEntityRendererMixin",
     "client.SoundEngineMixin",
     "client.TitleScreenMixin",
-    "fabric.AbstractWidgetMixin"
+    "fabric.AbstractWidgetMixin",
+    "fabric.BlockRenderDispatcherMixin"
   ],
   "injectors": {
     "defaultRequire": 1
