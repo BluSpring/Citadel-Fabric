@@ -7,7 +7,9 @@ import net.minecraft.world.item.ItemStack;
 import java.util.function.Consumer;
 
 public interface ItemRenderExtension {
-    Object getRenderPropertiesInternal();
+    default Object getRenderPropertiesInternal() {
+        return IClientItemExtensions.DEFAULT;
+    }
     default String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type)
     {
         return null;
