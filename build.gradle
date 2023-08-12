@@ -107,7 +107,7 @@ dependencies {
 
     include(modImplementation("io.github.fabricators_of_create.Porting-Lib:porting-lib:2.1.875+1.19.2"))
     include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:2.3.0")
-    include(modApi("com.github.KiltMC:ForgeBiomeModifiers:51f946b424"))
+    include(modApi("com.github.KiltMC:ForgeBiomeModifiers:834a616002"))
 
     include(implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:0.2.0-beta.9")))
 
