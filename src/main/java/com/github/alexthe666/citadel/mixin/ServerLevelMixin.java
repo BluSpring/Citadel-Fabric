@@ -16,7 +16,7 @@ public class ServerLevelMixin {
     @Shadow @Final private MinecraftServer server;
 
     @ModifyConstant(
-            method = "Lnet/minecraft/server/level/ServerLevel;tickTime()V",
+            method = "tickTime()V",
             remap = CitadelConstants.REMAPREFS,
             constant = @Constant(longValue = 1L),
             expect = 2)

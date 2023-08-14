@@ -19,7 +19,7 @@ import java.util.List;
 public class SmithingMenuMixin {
 
     @Redirect(
-            method = "Lnet/minecraft/world/inventory/SmithingMenu;createResult()V",
+            method = "createResult()V",
             remap = CitadelConstants.REMAPREFS, at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/RecipeManager;getRecipesFor(Lnet/minecraft/world/item/crafting/RecipeType;Lnet/minecraft/world/Container;Lnet/minecraft/world/level/Level;)Ljava/util/List;")
     )
     private List<UpgradeRecipe> citadel_getRecipesFor(RecipeManager recipeManager, RecipeType<UpgradeRecipe> type, Container container, Level level) {

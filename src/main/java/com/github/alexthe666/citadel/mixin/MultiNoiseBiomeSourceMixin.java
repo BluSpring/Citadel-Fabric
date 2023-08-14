@@ -21,7 +21,7 @@ public class MultiNoiseBiomeSourceMixin {
 
     @Inject(at = @At("HEAD"),
             remap = CitadelConstants.REMAPREFS,
-            method = "Lnet/minecraft/world/level/biome/MultiNoiseBiomeSource;getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;"
+            method = "getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;"
     )
     private void citadel_getNoiseBiomeCoords(int x, int y, int z, Climate.Sampler sampler, CallbackInfoReturnable<Holder<Biome>> cir) {
         lastSampledX = x;
@@ -32,7 +32,7 @@ public class MultiNoiseBiomeSourceMixin {
         @Inject(at = @At("RETURN"),
             cancellable = true,
             remap = CitadelConstants.REMAPREFS,
-            method = "Lnet/minecraft/world/level/biome/MultiNoiseBiomeSource;getNoiseBiome(Lnet/minecraft/world/level/biome/Climate$TargetPoint;)Lnet/minecraft/core/Holder;"
+            method = "getNoiseBiome(Lnet/minecraft/world/level/biome/Climate$TargetPoint;)Lnet/minecraft/core/Holder;"
     )
     private void citadel_getNoiseBiome(Climate.TargetPoint targetPoint, CallbackInfoReturnable<Holder<Biome>> cir) {
         float f = Climate.unquantizeCoord(targetPoint.continentalness());
