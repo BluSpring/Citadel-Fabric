@@ -5,6 +5,8 @@ import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import me.pepperbell.simplenetworking.C2SPacket;
 import me.pepperbell.simplenetworking.S2CPacket;
 import me.pepperbell.simplenetworking.SimpleChannel;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -44,6 +46,7 @@ public class PropertiesMessage implements S2CPacket, C2SPacket {
         Handler.handle(this, server, player);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void handle(Minecraft client, ClientPacketListener listener, PacketSender responseSender, SimpleChannel channel) {
         Handler.handle(this, client, client.player);
@@ -58,7 +61,7 @@ public class PropertiesMessage implements S2CPacket, C2SPacket {
 
         public static void handle(final PropertiesMessage message, BlockableEventLoop<?> loop, Player player) {
             loop.execute(() -> {
-                if (loop instanceof Minecraft) {
+                if (!(loop instanceof MinecraftServer)) {
                     Citadel.PROXY.handlePropertiesPacket(message.propertyID, message.compound, message.entityID);
                 } else {
                     Entity e = player.level.getEntity(message.entityID);
