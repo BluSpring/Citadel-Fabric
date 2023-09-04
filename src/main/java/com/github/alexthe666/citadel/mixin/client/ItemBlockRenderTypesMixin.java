@@ -19,7 +19,7 @@ public class ItemBlockRenderTypesMixin  {
     private static void citadel_getFluidRenderLayer(FluidState fluidState, CallbackInfoReturnable<RenderType> cir) {
         EventGetFluidRenderType event = new EventGetFluidRenderType(fluidState, cir.getReturnValue());
         var result = EventGetFluidRenderType.EVENT.invoker().onGetFluidRenderType(event);
-        if(result.isEmpty() || result.isTrue()){
+        if(result.asMinecraft().consumesAction()){
             cir.setReturnValue(event.getRenderType());
         }
     }

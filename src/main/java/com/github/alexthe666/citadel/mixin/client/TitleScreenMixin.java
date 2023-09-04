@@ -26,7 +26,7 @@ public abstract class TitleScreenMixin extends Screen {
     }
 
     @Inject(
-            method = {"Lnet/minecraft/client/gui/screens/TitleScreen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"},
+            method = {"render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"},
             remap = CitadelConstants.REMAPREFS,
             at = @At(
                     value = "INVOKE",
@@ -39,14 +39,14 @@ public abstract class TitleScreenMixin extends Screen {
         EventRenderSplashText.Pre event = new EventRenderSplashText.Pre(splash, poseStack, (TitleScreen) (Screen) this, partialTicks, splashTextColor);
         var result = EventRenderSplashText.PRE.invoker().onPreRenderSplashText(event);
 
-        if (result.isEmpty() || result.isTrue()) {
+        if (result.asMinecraft().consumesAction()) {
             splash = event.getSplashText();
             splashTextColor = event.getSplashTextColor();
         }
     }
 
     @Inject(
-            method = {"Lnet/minecraft/client/gui/screens/TitleScreen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"},
+            method = {"render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"},
             remap = CitadelConstants.REMAPREFS,
             at = @At(
                     value = "INVOKE",
@@ -62,7 +62,7 @@ public abstract class TitleScreenMixin extends Screen {
 
 
     @ModifyConstant(
-            method = {"Lnet/minecraft/client/gui/screens/TitleScreen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"},
+            method = {"render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"},
             constant = @Constant(intValue = 16776960))
     private int citadel_splashTextColor(int value) {
         return splashTextColor == -1 ? value : splashTextColor;

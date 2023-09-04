@@ -43,7 +43,7 @@ public class MultiNoiseBiomeSourceMixin {
         float f5 = Climate.unquantizeCoord(targetPoint.depth());
         EventReplaceBiome event = new EventReplaceBiome((ExpandedBiomeSource) this, cir.getReturnValue(), lastSampledX, lastSampledY, lastSampledZ, f, f1, f2, f3, f4, f5);
         var result = EventReplaceBiome.EVENT.invoker().onReplaceBiome(event);
-        if(result.isEmpty() || result.isTrue()){
+        if(result.asMinecraft().consumesAction()){
             cir.setReturnValue(event.getBiomeToGenerate());
         }
 

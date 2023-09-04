@@ -25,7 +25,7 @@ public abstract class HumanoidModelMixin extends Model {
     private void citadel_poseRightArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), false);
         var result = EventPosePlayerHand.EVENT.invoker().onPosePlayerHand(event);
-        if (result.isEmpty() || result.isTrue()) {
+        if (result.asMinecraft().consumesAction()) {
             ci.cancel();
         }
     }
@@ -35,7 +35,7 @@ public abstract class HumanoidModelMixin extends Model {
     private void citadel_poseLeftArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), true);
         var result = EventPosePlayerHand.EVENT.invoker().onPosePlayerHand(event);
-        if (result.isEmpty() || result.isTrue()) {
+        if (result.asMinecraft().consumesAction()) {
             ci.cancel();
         }
     }

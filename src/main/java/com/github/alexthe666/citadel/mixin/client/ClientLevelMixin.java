@@ -32,7 +32,7 @@ public abstract class ClientLevelMixin extends Level {
     private void citadel_getStarBrightness(float partialTicks, CallbackInfoReturnable<Float> cir) {
         EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), cir.getReturnValue(), partialTicks);
         var result = EventGetStarBrightness.EVENT.invoker().onGetStarBrightness(event);
-        if (result.isEmpty() || result.isTrue()) {
+        if (result.asMinecraft().consumesAction()) {
             cir.setReturnValue(event.getBrightness());
         }
     }

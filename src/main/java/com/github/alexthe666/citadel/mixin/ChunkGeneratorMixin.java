@@ -25,7 +25,7 @@ public class ChunkGeneratorMixin {
         if(biomeSpawns != cir.getReturnValue()){
             EventMergeStructureSpawns event = new EventMergeStructureSpawns(structureManager, pos, mobCategory, cir.getReturnValue(), biomeSpawns);
             var result = EventMergeStructureSpawns.EVENT.invoker().onMergeStructureSpawns(event);
-            if(result.isEmpty() || result.isTrue()){
+            if(result.asMinecraft().consumesAction()){
                 cir.setReturnValue(event.getStructureSpawns());
             }
         }
