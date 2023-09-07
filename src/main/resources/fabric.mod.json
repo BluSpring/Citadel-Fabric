@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "citadel",
-  "version": "2.1.4+fabric",
+  "version": "2.1.5+fabric",
   "name": "Citadel",
   "description": "A shared code library for many of Alexthe666's mods. Code used from LLibrary with permission.",
   "authors": [
