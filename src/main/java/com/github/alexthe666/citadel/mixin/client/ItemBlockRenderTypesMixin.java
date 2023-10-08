@@ -15,7 +15,7 @@ public class ItemBlockRenderTypesMixin  {
 
 
     @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, cancellable = true,
-            method = "Lnet/minecraft/client/renderer/ItemBlockRenderTypes;getRenderLayer(Lnet/minecraft/world/level/material/FluidState;)Lnet/minecraft/client/renderer/RenderType;")
+            method = "getRenderLayer(Lnet/minecraft/world/level/material/FluidState;)Lnet/minecraft/client/renderer/RenderType;")
     private static void citadel_getFluidRenderLayer(FluidState fluidState, CallbackInfoReturnable<RenderType> cir) {
         EventGetFluidRenderType event = new EventGetFluidRenderType(fluidState, cir.getReturnValue());
         var result = EventGetFluidRenderType.EVENT.invoker().onGetFluidRenderType(event);

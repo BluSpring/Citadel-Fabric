@@ -21,7 +21,7 @@ public abstract class HumanoidModelMixin extends Model {
         super(p_103110_);
     }
 
-    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/model/HumanoidModel;poseRightArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
+    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "poseRightArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
     private void citadel_poseRightArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), false);
         var result = EventPosePlayerHand.EVENT.invoker().onPosePlayerHand(event);
@@ -31,7 +31,7 @@ public abstract class HumanoidModelMixin extends Model {
     }
 
 
-    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/model/HumanoidModel;poseLeftArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
+    @Inject(at = @At("HEAD"), remap = CitadelConstants.REMAPREFS, method = "poseLeftArm(Lnet/minecraft/world/entity/LivingEntity;)V", cancellable = true)
     private void citadel_poseLeftArm(LivingEntity entity, CallbackInfo ci) {
         EventPosePlayerHand event = new EventPosePlayerHand(entity, (HumanoidModel) ((Model) this), true);
         var result = EventPosePlayerHand.EVENT.invoker().onPosePlayerHand(event);

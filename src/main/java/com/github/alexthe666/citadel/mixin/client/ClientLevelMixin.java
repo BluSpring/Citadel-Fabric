@@ -28,7 +28,7 @@ public abstract class ClientLevelMixin extends Level {
         super(writableLevelData, levelResourceKey, dimensionTypeHolder, filler, b1, b2, seed, i);
     }
 
-    @Inject(at = @At("RETURN"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/multiplayer/ClientLevel;getStarBrightness(F)F", cancellable = true)
+    @Inject(at = @At("RETURN"), remap = CitadelConstants.REMAPREFS, method = "getStarBrightness(F)F", cancellable = true)
     private void citadel_getStarBrightness(float partialTicks, CallbackInfoReturnable<Float> cir) {
         EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), cir.getReturnValue(), partialTicks);
         var result = EventGetStarBrightness.EVENT.invoker().onGetStarBrightness(event);
@@ -38,7 +38,7 @@ public abstract class ClientLevelMixin extends Level {
     }
 
     @ModifyConstant(
-            method = "Lnet/minecraft/client/multiplayer/ClientLevel;tickTime()V",
+            method = "tickTime()V",
             remap = CitadelConstants.REMAPREFS,
             constant = @Constant(longValue = 1L),
             expect = 2)
