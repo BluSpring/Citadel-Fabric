@@ -2,6 +2,7 @@ package com.github.alexthe666.citadel.mixin;
 
 import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
 import com.google.common.collect.ImmutableSet;
+import it.unimi.dsi.fastutil.objects.ObjectLinkedOpenHashSet;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -39,7 +40,7 @@ public abstract class BiomeSourceMixin implements ExpandedBiomeSource {
             ImmutableSet.Builder<Holder<Biome>> builder = ImmutableSet.builder();
             builder.addAll(this.possibleBiomes);
             builder.addAll(newGenBiomes);
-            this.possibleBiomes = builder.build();
+            this.possibleBiomes = new ObjectLinkedOpenHashSet<>(builder.build());
             expanded = true;
         }
     }
