@@ -4,8 +4,8 @@ import com.github.alexthe666.citadel.Citadel;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -20,7 +20,7 @@ public class SpawnBiomeConfig {
 
     private SpawnBiomeConfig(ResourceLocation fileName) {
         if (!fileName.getNamespace().endsWith(".json")) {
-            this.fileName = new ResourceLocation(fileName.getNamespace(), fileName.getPath() + ".json");
+            this.fileName = ResourceLocation.fromNamespaceAndPath(fileName.getNamespace(), fileName.getPath() + ".json");
         } else {
             this.fileName = fileName;
         }
@@ -52,7 +52,7 @@ public class SpawnBiomeConfig {
     }
 
     private File getConfigDirFile() {
-        Path configPath = FMLPaths.CONFIGDIR.get();
+        Path configPath = FabricLoader.getInstance().getConfigDir();
         Path jsonPath = Paths.get(configPath.toAbsolutePath().toString(), fileName.getNamespace());
         return jsonPath.toFile();
     }

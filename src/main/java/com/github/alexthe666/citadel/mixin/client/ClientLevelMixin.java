@@ -12,8 +12,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -33,8 +31,7 @@ public abstract class ClientLevelMixin extends Level {
     @Inject(at = @At("RETURN"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/client/multiplayer/ClientLevel;getStarBrightness(F)F", cancellable = true)
     private void citadel_getStarBrightness(float partialTicks, CallbackInfoReturnable<Float> cir) {
         EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), cir.getReturnValue(), partialTicks);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.ALLOW) {
+        if (EventGetStarBrightness.EVENT.invoker().onGetStarBrightness(event).isTrue()) {
             cir.setReturnValue(event.getBrightness());
         }
     }

@@ -2,11 +2,12 @@ package com.github.alexthe666.citadel.server.message;
 
 import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.function.Supplier;
 
-public class AnimationMessage {
+public class AnimationMessage implements CitadelPacket {
 
     private int entityID;
     private int index;
@@ -16,22 +17,26 @@ public class AnimationMessage {
         this.index = index;
     }
 
-    public static class Handler {
-        public Handler() {
-        }
-
-        public static void handle(AnimationMessage message, Supplier<NetworkEvent.Context> context) {
-            Citadel.PROXY.handleAnimationPacket(message.entityID, message.index);
-            context.get().setPacketHandled(true);
-        }
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return CitadelMessages.ANIMATION_TYPE;
     }
 
-    public static AnimationMessage read(FriendlyByteBuf buf) {
-        return new AnimationMessage(buf.readInt(), buf.readInt());
+    @Override
+    public void handleClient() {
+        Citadel.PROXY.handleAnimationPacket(this.entityID, this.index);
     }
 
-    public static void write(AnimationMessage message, FriendlyByteBuf buf) {
-        buf.writeInt(message.entityID);
-        buf.writeInt(message.index);
+    @Override
+    public void handleServer(ServerPlayer sender) {
+        Citadel.PROXY.handleAnimationPacket(this.entityID, this.index);
+    }
+
+    public int getEntityID() {
+        return entityID;
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.config.ServerConfig;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -23,4 +24,7 @@ public class CitadelConstants {
         return aprilFools && ServerConfig.aprilFools;
     }
 
+    public static ResourceLocation id(String name) {
+        return ResourceLocation.fromNamespaceAndPath("citadel", name);
+    }
 }

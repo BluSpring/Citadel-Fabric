@@ -6,7 +6,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.crafting.Ingredient;
 
-public class CustomArmorMaterial implements ArmorMaterial {
+/*public class CustomArmorMaterial implements ArmorMaterial {
     private String name;
     private int durability;
     private int[] damageReduction;
@@ -70,3 +70,4 @@ public class CustomArmorMaterial implements ArmorMaterial {
         return knockbackResistance;
     }
 }
+*/

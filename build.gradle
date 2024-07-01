@@ -1,91 +1,64 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net' }
-        maven {
-            url = 'https://repo.spongepowered.org/repository/maven-public/'
-            content { includeGroup "org.spongepowered" }
-        }
-        mavenCentral()
-        gradlePluginPortal()
-        jcenter()
-    }
-    dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-    }
-}
-
 plugins {
     id 'java'
     id 'idea'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
-}
-
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-
-configurations {
-    shade
-    library
-    library.extendsFrom(shade)
-    minecraftLibrary.extendsFrom(library)
+    id 'fabric-loom' version '1.7-SNAPSHOT'
 }
 
 version = "${mod_version}-${mc_version}"
 group = "com.tfar.${modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${modid}"
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+loom {
+    accessWidenerPath = file("src/main/resources/citadel.accesswidener")
+}
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version') + '(' + System.getProperty('java.vendor') + ') Arch: ' + System.getProperty('os.arch'))
-minecraft {
-    mappings channel: 'official', version: '1.20.1'
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    runs {
-        client {
-            properties 'mixin.env.remapRefMap': 'true'
-            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-            workingDirectory project.file('run')
-            arg "-mixin.config="+archivesBaseName+".mixins.json"
-            property 'forge.logging.console.level', 'debug'
 
-            mods {
-                citadel {
-                    source sourceSets.main
-                }
-            }
-        }
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.mc_version
+    inputs.property "loader_version", project.loader_version
+    inputs.property "fabric_version", project.fabric_version
+    inputs.property "architectury_version", project.architectury_version
+    filteringCharset "UTF-8"
 
-        server {
-            properties 'mixin.env.remapRefMap': 'true'
-            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-            workingDirectory project.file('run')
-            arg "-mixin.config="+archivesBaseName+".mixins.json"
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": project.mc_version,
+                "loader_version": project.loader_version,
+                "fabric_version": project.fabric_version,
+                "architectury_version": project.architectury_version
+    }
+}
 
+def targetJavaVersion = 21
+tasks.withType(JavaCompile).configureEach {
+    // ensure that the encoding is set to UTF-8, no matter what the system default is
+    // this fixes some edge cases with special characters not displaying correctly
+    // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
+    // If Javadoc is generated, this must be specified in that task too.
+    it.options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        it.options.release.set(targetJavaVersion)
+    }
+}
 
-            property 'forge.logging.console.level', 'debug'
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
 
-            mods {
-                citadel {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-            properties 'mixin.env.remapRefMap': 'true'
-            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', sourceSets.main.resources.srcDirs[0]
-            mods {
-                citadel {
-                    source sourceSets.main
-                }
-            }
-        }
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}"}
     }
 }
 
@@ -112,19 +85,60 @@ repositories{
         //maven for all github project releases
         url "https://jitpack.io"
     }
+
+    mavenCentral()
+    maven {
+        url "https://maven.parchmentmc.org"
+    }
+
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = "https://api.modrinth.com/maven"
+            }
+        }
+        filter {
+            includeGroup "maven.modrinth"
+        }
+    }
+
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
+
+    maven { url "https://maven.architectury.dev/" }
+
+    maven {
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.0.34'
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    // To change the versions see the gradle.properties file
+    minecraft "com.mojang:minecraft:${project.mc_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-1.21:2024.06.23@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "dev.architectury:architectury-fabric:${architectury_version}"
+
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_version}"
+
     //jaadec fork by yours truly to decode mp4 audio
-    shade ('com.github.AlexModGuy:JAADec:master-SNAPSHOT') {
+    shadow ('com.github.AlexModGuy:JAADec:master-SNAPSHOT') {
         ['commons-logging', 'org.slf4j'].each {
             exclude group: "$it"
         }
     }
     //jcodec for decoding mp4 video
-    shade ('org.jcodec:jcodec:0.2.5') {
+    shadow ('org.jcodec:jcodec:0.2.5') {
         exclude group: 'net.sourceforge.jaad.aac'
         ['commons-logging', 'org.slf4j', 'net.sourceforge.jaad.aac'].each {
             exclude group: "$it"
@@ -136,15 +150,9 @@ configurations {
     all*.exclude group: 'net.sourceforge.jaad', module:'jcodec'
 }
 
-sourceSets {
-    main.resources.srcDirs += 'src/generated/resources'
-}
-
-
 jar {
-    classifier 'slim'
     afterEvaluate {
-        configurations.shade.each { dep ->
+        configurations.shadow.each { dep ->
             from(project.zipTree(dep)){
                 exclude 'META-INF', 'META-INF/**'
             }
@@ -152,44 +160,11 @@ jar {
 
     }
 }
-// Example for how to get properties into the manifest for reading by the runtime..
-jar {
-    duplicatesStrategy 'exclude'
-    manifest {
-        attributes([
-                "Specification-Title": "${modid}",
-                "Specification-Vendor": "citadel",
-                "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"citadel",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "MixinConfigs": "${modid}.mixins.json"
-        ])
-    }
-}
-
 
 //builds the jar with shadowed dependencies
 shadowJar {
-    classifier ''
-    configurations = [project.configurations.shade]
+    configurations = [project.configurations.shadow]
     duplicatesStrategy 'exclude'
     relocate 'net.sourceforge.jaad', 'com.github.alexthe666.citadel.repack.jaad'
     relocate 'org.jcodec', 'com.github.alexthe666.citadel.repack.jcodec'
-    finalizedBy 'reobfShadowJar'
 }
-
-apply plugin: 'org.spongepowered.mixin'
-
-mixin {
-    add sourceSets.main, "${modid}.refmap.json"
-}
-
-assemble.dependsOn(shadowJar)
-
-reobf {
-    shadowJar {}
-}
-
-jar.finalizedBy('reobfJar')

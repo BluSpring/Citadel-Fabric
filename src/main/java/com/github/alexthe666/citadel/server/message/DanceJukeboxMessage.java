@@ -3,14 +3,14 @@ package com.github.alexthe666.citadel.server.message;
 import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class DanceJukeboxMessage {
+public class DanceJukeboxMessage implements CitadelPacket {
 
     public int entityID;
     public boolean dance;
@@ -25,33 +25,36 @@ public class DanceJukeboxMessage {
     public DanceJukeboxMessage() {
     }
 
-    public static DanceJukeboxMessage read(FriendlyByteBuf buf) {
-        return new DanceJukeboxMessage(buf.readInt(), buf.readBoolean(), buf.readBlockPos());
+    public int getEntityID() {
+        return entityID;
     }
 
-    public static void write(DanceJukeboxMessage message, FriendlyByteBuf buf) {
-        buf.writeInt(message.entityID);
-        buf.writeBoolean(message.dance);
-        buf.writeBlockPos(message.jukeBox);
+    public boolean isDance() {
+        return dance;
     }
 
-    public static class Handler {
-        public Handler() {
-        }
+    public BlockPos getJukeBox() {
+        return jukeBox;
+    }
 
-        public static void handle(DanceJukeboxMessage message, Supplier<NetworkEvent.Context> context) {
-            context.get().setPacketHandled(true);
-            context.get().enqueueWork(() -> {
-                Player player = context.get().getSender();
-                if(context.get().getDirection().getReceptionSide() == LogicalSide.CLIENT){
-                    player = Citadel.PROXY.getClientSidePlayer();
-                }
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return CitadelMessages.DANCE_JUKEBOX_TYPE;
+    }
 
-                if (player != null) {
-                    Citadel.PROXY.handleJukeboxPacket(player.level(), message.entityID, message.jukeBox, message.dance);
+    @Override
+    public void handleClient() {
+        handle(Citadel.PROXY.getClientSidePlayer());
+    }
 
-                }
-            });
+    @Override
+    public void handleServer(ServerPlayer sender) {
+        handle(sender);
+    }
+
+    private void handle(Player player) {
+        if (player != null) {
+            Citadel.PROXY.handleJukeboxPacket(player.level(), this.entityID, this.jukeBox, this.dance);
         }
     }
 }

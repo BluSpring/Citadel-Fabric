@@ -14,14 +14,13 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.awt.*;
 
@@ -49,7 +48,7 @@ public class Tetris {
     private boolean[] flashingLayer = new boolean[HEIGHT];
     private int flashFor = 0;
 
-    private final Block[] allRegisteredBlocks = ForgeRegistries.BLOCKS.getValues().stream().toArray(Block[]::new);
+    private final Block[] allRegisteredBlocks = BuiltInRegistries.BLOCK.stream().toArray(Block[]::new);
 
     public Tetris() {
         reset();
@@ -206,7 +205,7 @@ public class Tetris {
             if (allRegisteredBlocks.length > 1) {
                 BlockState block = allRegisteredBlocks[random.nextInt(allRegisteredBlocks.length - 1)].defaultBlockState();
                 BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(block);
-                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() && blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())) {
+                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() /*&& blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())*/) {
                     randomState = block;
                     break;
                 }
@@ -254,17 +253,17 @@ public class Tetris {
     }
 
     private void renderBlockState(BlockState state, float offsetX, float offsetY, float size) {
-        TextureAtlasSprite sprite = Minecraft.getInstance().getBlockRenderer().getBlockModel(state).getParticleIcon(ModelData.EMPTY);
+        TextureAtlasSprite sprite = Minecraft.getInstance().getBlockRenderer().getBlockModel(state).getParticleIcon();
         Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder bufferbuilder = tesselator.getBuilder();
-        bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         float f = size * 0.5F;
-        bufferbuilder.vertex(-f + offsetX, f + offsetY, 80.0D).uv(sprite.getU0(), sprite.getV1()).endVertex();
-        bufferbuilder.vertex(f + offsetX, f + offsetY, 80.0D).uv(sprite.getU1(), sprite.getV1()).endVertex();
-        bufferbuilder.vertex(f + offsetX, -f + offsetY, 80.0D).uv(sprite.getU1(), sprite.getV0()).endVertex();
-        bufferbuilder.vertex(-f + offsetX, -f + offsetY, 80.0D).uv(sprite.getU0(), sprite.getV0()).endVertex();
-        tesselator.end();
-
+        bufferbuilder.addVertex(-f + offsetX, f + offsetY, 80.0f).setUv(sprite.getU0(), sprite.getV1());
+        bufferbuilder.addVertex(f + offsetX, f + offsetY, 80.0f).setUv(sprite.getU1(), sprite.getV1());
+        bufferbuilder.addVertex(f + offsetX, -f + offsetY, 80.0f).setUv(sprite.getU1(), sprite.getV0());
+        bufferbuilder.addVertex(-f + offsetX, -f + offsetY, 80.0f).setUv(sprite.getU0(), sprite.getV0());
+        var data = bufferbuilder.build();
+        RenderType.cutout().draw(data);
+        data.close();
     }
 
     public void render(TitleScreen screen, GuiGraphics guiGraphics, float partialTick) {

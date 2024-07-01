@@ -10,8 +10,8 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -120,7 +120,7 @@ public class ColorMappedTexture extends SimpleTexture {
 
         public ColorsMetadataSection fromJson(JsonObject json) {
 
-            return new ColorsMetadataSection(new ResourceLocation(GsonHelper.getAsString(json, "color_ramp")));
+            return new ColorsMetadataSection(ResourceLocation.parse(GsonHelper.getAsString(json, "color_ramp")));
         }
 
         public String getMetadataSectionName() {

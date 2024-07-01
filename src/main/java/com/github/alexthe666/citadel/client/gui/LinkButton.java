@@ -1,5 +1,6 @@
 package com.github.alexthe666.citadel.client.gui;
 
+import com.github.alexthe666.citadel.fabric.extensions.ForegroundColorExtension;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 
-public class LinkButton extends Button {
+public class LinkButton extends Button implements ForegroundColorExtension {
 
     public ItemStack previewStack;
     public GuiBasicBook book;
@@ -86,7 +87,7 @@ public class LinkButton extends Button {
 
     public static void drawTextOf(GuiGraphics guiGraphics, Font font, Component component, int x, int y, int color) {
         FormattedCharSequence formattedcharsequence = component.getVisualOrderText();
-        guiGraphics.drawString(font, formattedcharsequence, (float)(x - font.width(formattedcharsequence) / 2), (float)y, color, false);
+        guiGraphics.drawString(font, formattedcharsequence, x - font.width(formattedcharsequence) / 2, y, color, false);
     }
 
     @Override

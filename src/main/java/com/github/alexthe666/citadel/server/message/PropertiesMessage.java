@@ -4,14 +4,14 @@ import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PropertiesMessage {
+public class PropertiesMessage implements CitadelPacket {
     private String propertyID;
     private CompoundTag compound;
     private int entityID;
@@ -22,31 +22,33 @@ public class PropertiesMessage {
         this.entityID = entityID;
     }
 
-    public static void write(PropertiesMessage message, FriendlyByteBuf packetBuffer) {
-        PacketBufferUtils.writeUTF8String(packetBuffer, message.propertyID);
-        PacketBufferUtils.writeTag(packetBuffer, message.compound);
-        packetBuffer.writeInt(message.entityID);
+    public String getPropertyID() {
+        return propertyID;
     }
 
-    public static PropertiesMessage read(FriendlyByteBuf packetBuffer) {
-        return new PropertiesMessage(PacketBufferUtils.readUTF8String(packetBuffer), PacketBufferUtils.readTag(packetBuffer), packetBuffer.readInt());
+    public CompoundTag getCompound() {
+        return compound;
     }
 
-    public static class Handler {
+    public int getEntityID() {
+        return entityID;
+    }
 
-        public static void handle(final PropertiesMessage message, Supplier<NetworkEvent.Context> context) {
-            context.get().setPacketHandled(true);
-            context.get().enqueueWork(() -> {
-                if (context.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
-                    Citadel.PROXY.handlePropertiesPacket(message.propertyID, message.compound, message.entityID);
-                } else {
-                    Entity e = context.get().getSender().level().getEntity(message.entityID);
-                    if (e instanceof LivingEntity && (message.propertyID.equals("CitadelPatreonConfig") || message.propertyID.equals("CitadelTagUpdate"))) {
-                        CitadelEntityData.setCitadelTag((LivingEntity) e, message.compound);
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return CitadelMessages.PROPERTIES_TYPE;
+    }
 
-                    }
-                }
-            });
+    @Override
+    public void handleClient() {
+        Citadel.PROXY.handlePropertiesPacket(this.propertyID, this.compound, this.entityID);
+    }
+
+    @Override
+    public void handleServer(ServerPlayer sender) {
+        Entity e = sender.level().getEntity(this.entityID);
+        if (e instanceof LivingEntity && (this.propertyID.equals("CitadelPatreonConfig") || this.propertyID.equals("CitadelTagUpdate"))) {
+            CitadelEntityData.setCitadelTag((LivingEntity) e, this.compound);
         }
     }
 }

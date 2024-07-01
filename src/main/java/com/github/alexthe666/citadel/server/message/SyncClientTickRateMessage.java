@@ -3,16 +3,19 @@ package com.github.alexthe666.citadel.server.message;
 import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 import java.util.function.Supplier;
 
-public class SyncClientTickRateMessage {
+public class SyncClientTickRateMessage implements CitadelPacket {
     private CompoundTag compound;
 
     public SyncClientTickRateMessage(CompoundTag compound) {
         this.compound = compound;
+    }
+
+    public CompoundTag getCompound() {
+        return compound;
     }
 
     public static void write(SyncClientTickRateMessage message, FriendlyByteBuf packetBuffer) {
@@ -23,16 +26,13 @@ public class SyncClientTickRateMessage {
         return new SyncClientTickRateMessage(PacketBufferUtils.readTag(packetBuffer));
     }
 
-    public static class Handler {
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return CitadelMessages.SYNC_CLIENT_TICK_RATE_TYPE;
+    }
 
-        public static void handle(final SyncClientTickRateMessage message, Supplier<NetworkEvent.Context> context) {
-            context.get().setPacketHandled(true);
-            context.get().enqueueWork(() -> {
-                if (context.get().getDirection().getReceptionSide() == LogicalSide.CLIENT) {
-                    Citadel.PROXY.handleClientTickRatePacket(message.compound);
-
-                }
-            });
-        }
+    @Override
+    public void handleClient() {
+        Citadel.PROXY.handleClientTickRatePacket(this.compound);
     }
 }

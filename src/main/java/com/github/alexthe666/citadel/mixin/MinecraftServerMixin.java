@@ -2,7 +2,10 @@ package com.github.alexthe666.citadel.mixin;
 
 import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.server.world.ModifiableTickRateServer;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.TimeUtil;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
@@ -17,7 +20,7 @@ public abstract class MinecraftServerMixin implements ModifiableTickRateServer {
     private long masterMs;
 
     @Inject(
-            method = {"Lnet/minecraft/server/MinecraftServer;runServer()V"},
+            method = {"runServer()V"},
             remap = CitadelConstants.REMAPREFS,
             at = @At(
                     value = "INVOKE",
@@ -34,12 +37,11 @@ public abstract class MinecraftServerMixin implements ModifiableTickRateServer {
 
     }
 
-    @ModifyConstant(
-            method = {"Lnet/minecraft/server/MinecraftServer;runServer()V"},
-            constant = @Constant(longValue = 50L),
-            expect = 4)
+    @ModifyExpressionValue(
+            method = {"runServer()V"},
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/server/ServerTickRateManager;nanosecondsPerTick()J"))
     private long citadel_serverMsPerTick(long value) {
-        return modifiedMsPerTick == -1 ? value : modifiedMsPerTick;
+        return modifiedMsPerTick == -1 ? value : modifiedMsPerTick * TimeUtil.NANOSECONDS_PER_MILLISECOND;
     }
 
     @Override

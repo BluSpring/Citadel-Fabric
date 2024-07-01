@@ -1,15 +1,19 @@
 package com.github.alexthe666.citadel.client.event;
 
+import dev.architectury.event.Event;
+import dev.architectury.event.EventFactory;
+import dev.architectury.event.EventResult;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.eventbus.api.Event;
 
-@OnlyIn(Dist.CLIENT)
-@Event.HasResult
-public class EventPosePlayerHand extends Event {
+public class EventPosePlayerHand {
+    public static final Event<PosePlayerHandCallback> EVENT = EventFactory.createEventResult();
+
+    public interface PosePlayerHandCallback {
+        EventResult onPosePlayerHand(EventPosePlayerHand event);
+    }
+
     private LivingEntity entityIn;
     private HumanoidModel model;
     private boolean left;

@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel.server.generation;
 
 import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.mixin.StructureTemplatePoolAccessor;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.Registry;
@@ -16,11 +17,11 @@ import java.util.function.Consumer;
 
 public class VillageHouseManager {
     public static final List<ResourceLocation> VILLAGE_REPLACEMENT_POOLS = List.of(
-            new ResourceLocation("minecraft:village/plains/houses"),
-            new ResourceLocation("minecraft:village/desert/houses"),
-            new ResourceLocation("minecraft:village/savanna/houses"),
-            new ResourceLocation("minecraft:village/snowy/houses"),
-            new ResourceLocation("minecraft:village/taiga/houses"));
+        ResourceLocation.parse("minecraft:village/plains/houses"),
+        ResourceLocation.parse("minecraft:village/desert/houses"),
+        ResourceLocation.parse("minecraft:village/savanna/houses"),
+        ResourceLocation.parse("minecraft:village/snowy/houses"),
+        ResourceLocation.parse("minecraft:village/taiga/houses"));
     private static final List<Pair<ResourceLocation, Consumer<StructureTemplatePool>>> REGISTRY = new ArrayList<>();
 
     public static void register(ResourceLocation pool, Consumer<StructureTemplatePool> addToPool) {
@@ -31,15 +32,15 @@ public class VillageHouseManager {
     public static StructureTemplatePool addToPool(StructureTemplatePool pool, StructurePoolElement element, int weight) {
         if (weight > 0) {
             if (pool != null) {
-                ObjectArrayList<StructurePoolElement> templates = new ObjectArrayList<>(pool.templates);
+                ObjectArrayList<StructurePoolElement> templates = new ObjectArrayList<>(((StructureTemplatePoolAccessor) pool).getTemplates());
                 if (!templates.contains(element)) {
                     for (int i = 0; i < weight; i++) {
                         templates.add(element);
                     }
-                    List<Pair<StructurePoolElement, Integer>> rawTemplates = new ArrayList(pool.rawTemplates);
+                    List<Pair<StructurePoolElement, Integer>> rawTemplates = new ArrayList(((StructureTemplatePoolAccessor) pool).getRawTemplates());
                     rawTemplates.add(new Pair<>(element, weight));
-                    pool.templates = templates;
-                    pool.rawTemplates = rawTemplates;
+                    ((StructureTemplatePoolAccessor) pool).setTemplates(templates);
+                    ((StructureTemplatePoolAccessor) pool).setRawTemplates(rawTemplates);
                     Citadel.LOGGER.info("Added to village structure pool");
                 }
             }

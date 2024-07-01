@@ -25,9 +25,9 @@ public abstract class LivingEntityMixin extends Entity implements ICitadelDataEn
         super(entityType, world);
     }
 
-    @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/world/entity/LivingEntity;defineSynchedData()V")
-    private void citadel_registerData(CallbackInfo ci) {
-        entityData.define(CITADEL_DATA, new CompoundTag());
+    @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "defineSynchedData")
+    private void citadel_registerData(SynchedEntityData.Builder builder, CallbackInfo ci) {
+        builder.define(CITADEL_DATA, new CompoundTag());
     }
 
     @Inject(at = @At("TAIL"), remap = CitadelConstants.REMAPREFS, method = "Lnet/minecraft/world/entity/LivingEntity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V")

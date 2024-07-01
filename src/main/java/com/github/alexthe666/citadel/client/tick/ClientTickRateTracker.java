@@ -1,11 +1,13 @@
 package com.github.alexthe666.citadel.client.tick;
 
+import com.github.alexthe666.citadel.mixin.TickRateManagerAccessor;
 import com.github.alexthe666.citadel.server.tick.TickRateTracker;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.TimeUtil;
 import net.minecraft.world.entity.Entity;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +44,9 @@ public class ClientTickRateTracker extends TickRateTracker {
 
     public void masterTick(){
         super.masterTick();
-        client.timer.msPerTick = getClientTickRate();
+        if (client.level != null) {
+            ((TickRateManagerAccessor) client.level.tickRateManager()).setNanosecondsPerTick((long) getClientTickRate() * TimeUtil.NANOSECONDS_PER_MILLISECOND);
+        }
     }
 
     public float getClientTickRate(){

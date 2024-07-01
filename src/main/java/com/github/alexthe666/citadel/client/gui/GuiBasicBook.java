@@ -4,6 +4,7 @@ import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.client.gui.data.*;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
+import com.github.alexthe666.citadel.mixin.ScreenAccessor;
 import com.github.alexthe666.citadel.recipe.SpecialRecipeInGuideBook;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -13,6 +14,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.math.Axis;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -43,10 +46,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.io.IOUtils;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -54,10 +55,10 @@ import java.util.*;
 
 public abstract class GuiBasicBook extends Screen {
 
-    private static final ResourceLocation BOOK_PAGE_TEXTURE = new ResourceLocation("citadel:textures/gui/book/book_pages.png");
-    private static final ResourceLocation BOOK_BINDING_TEXTURE = new ResourceLocation("citadel:textures/gui/book/book_binding.png");
-    private static final ResourceLocation BOOK_WIDGET_TEXTURE = new ResourceLocation("citadel:textures/gui/book/widgets.png");
-    private static final ResourceLocation BOOK_BUTTONS_TEXTURE = new ResourceLocation("citadel:textures/gui/book/link_buttons.png");
+    private static final ResourceLocation BOOK_PAGE_TEXTURE = ResourceLocation.parse("citadel:textures/gui/book/book_pages.png");
+    private static final ResourceLocation BOOK_BINDING_TEXTURE = ResourceLocation.parse("citadel:textures/gui/book/book_binding.png");
+    private static final ResourceLocation BOOK_WIDGET_TEXTURE = ResourceLocation.parse("citadel:textures/gui/book/widgets.png");
+    private static final ResourceLocation BOOK_BUTTONS_TEXTURE = ResourceLocation.parse("citadel:textures/gui/book/link_buttons.png");
     protected final List<LineData> lines = new ArrayList<>();
     protected final List<LinkData> links = new ArrayList<>();
     protected final List<ItemRenderData> itemRenders = new ArrayList<>();
@@ -121,7 +122,7 @@ public abstract class GuiBasicBook extends Screen {
         RenderSystem.runAsFancy(() -> {
             VertexConsumer ivertexbuilder = irendertypebuffer$impl.getBuffer(RenderType.entityCutoutNoCull(tex));
             model.resetToDefaultPose();
-            model.renderToBuffer(matrixstack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+            model.renderToBuffer(matrixstack, ivertexbuilder, 15728880, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
         });
         Lighting.setupFor3DItems();
     }
@@ -150,7 +151,7 @@ public abstract class GuiBasicBook extends Screen {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(posX, posY, zOff);
-        guiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
+        guiGraphics.pose().mulPose((new Matrix4f()).scaling((float)scale, (float)scale, (float)(-scale)));
         Quaternionf quaternion = Axis.ZP.rotationDegrees(180F);
         Quaternionf quaternion1 = Axis.XP.rotationDegrees(f1 * 20.0F);
         quaternion.mul(quaternion1);
@@ -203,7 +204,7 @@ public abstract class GuiBasicBook extends Screen {
     }
 
     private void addLinkButtons() {
-        this.renderables.clear();
+        ((ScreenAccessor) this).getRenderables().clear();
         this.clearWidgets();
         addNextPreviousButtons();
         int k = (this.width - this.xSize) / 2;
@@ -215,7 +216,7 @@ public abstract class GuiBasicBook extends Screen {
                 yIndexesToSkip.add(new Whitespace(linkData.getPage(), linkData.getX() - maxLength / 2, linkData.getY(), 100, 20));
                 this.addRenderableWidget(new LinkButton(this, k + linkData.getX() - maxLength / 2, l + linkData.getY(), maxLength, 20, Component.translatable(linkData.getTitleText()), linkData.getDisplayItem(), (p_213021_1_) -> {
                     prevPageJSON = this.currentPageJSON;
-                    currentPageJSON = new ResourceLocation(getTextFileDirectory() + linkData.getLinkedPage());
+                    currentPageJSON = ResourceLocation.parse(getTextFileDirectory() + linkData.getLinkedPage());
                     preservedPageIndex = this.currentPageCounter;
                     currentPageCounter = 0;
                     addNextPreviousButtons();
@@ -231,7 +232,7 @@ public abstract class GuiBasicBook extends Screen {
                 yIndexesToSkip.add(new Whitespace(linkData.getPage(), linkData.getX() - 12, linkData.getY(), 100, 20));
                 this.addRenderableWidget(new EntityLinkButton(this, linkData, k, l, (p_213021_1_) -> {
                     prevPageJSON = this.currentPageJSON;
-                    currentPageJSON = new ResourceLocation(getTextFileDirectory() + linkData.getLinkedPage());
+                    currentPageJSON = ResourceLocation.parse(getTextFileDirectory() + linkData.getLinkedPage());
                     preservedPageIndex = this.currentPageCounter;
                     currentPageCounter = 0;
                     addNextPreviousButtons();
@@ -254,7 +255,7 @@ public abstract class GuiBasicBook extends Screen {
             } else {
                 if (this.internalPage != null && !this.internalPage.getParent().isEmpty()) {
                     prevPageJSON = this.currentPageJSON;
-                    currentPageJSON = new ResourceLocation(getTextFileDirectory() + this.internalPage.getParent());
+                    currentPageJSON = ResourceLocation.parse(getTextFileDirectory() + this.internalPage.getParent());
                     currentPageCounter = preservedPageIndex;
                     preservedPageIndex = 0;
                 }
@@ -271,7 +272,7 @@ public abstract class GuiBasicBook extends Screen {
         int bindingR = bindingColor >> 16 & 255;
         int bindingG = bindingColor >> 8 & 255;
         int bindingB = bindingColor & 255;
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, x, y, partialTicks);
         int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize + 128) / 2;
         BookBlit.blitWithColor(guiGraphics, getBookBindingTexture(), k, l, 0, 0, xSize, ySize, xSize, ySize, bindingR, bindingG, bindingB, 255);
@@ -304,7 +305,7 @@ public abstract class GuiBasicBook extends Screen {
     private void refreshSpacing() {
         if (internalPage != null) {
             String lang = Minecraft.getInstance().getLanguageManager().getSelected().toLowerCase();
-            currentPageText = new ResourceLocation(getTextFileDirectory() + lang + "/" + internalPage.getTextFileToReadFrom());
+            currentPageText = ResourceLocation.parse(getTextFileDirectory() + lang + "/" + internalPage.getTextFileToReadFrom());
             boolean invalid = false;
             try {
                 //test if it exists. if no exception, then the language is supported
@@ -313,7 +314,7 @@ public abstract class GuiBasicBook extends Screen {
             } catch (Exception e) {
                 invalid = true;
                 Citadel.LOGGER.warn("Could not find language file for translation, defaulting to english");
-                currentPageText = new ResourceLocation(getTextFileDirectory() + "en_us/" + internalPage.getTextFileToReadFrom());
+                currentPageText = ResourceLocation.parse(getTextFileDirectory() + "en_us/" + internalPage.getTextFileToReadFrom());
             }
 
             readInPageWidgets(internalPage);
@@ -324,14 +325,14 @@ public abstract class GuiBasicBook extends Screen {
     }
 
     private Item getItemByRegistryName(String registryName) {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName));
+        return BuiltInRegistries.ITEM.get(ResourceLocation.parse(registryName));
     }
 
     private Recipe getRecipeByName(String registryName) {
         try {
             RecipeManager manager = Minecraft.getInstance().level.getRecipeManager();
-            if (manager.byKey(new ResourceLocation(registryName)).isPresent()) {
-                return manager.byKey(new ResourceLocation(registryName)).get();
+            if (manager.byKey(ResourceLocation.parse(registryName)).isPresent()) {
+                return manager.byKey(ResourceLocation.parse(registryName)).get().value();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -378,7 +379,7 @@ public abstract class GuiBasicBook extends Screen {
                 if (imageData != null) {
                     ResourceLocation tex = textureMap.get(imageData.getTexture());
                     if (tex == null) {
-                        tex = new ResourceLocation(imageData.getTexture());
+                        tex = ResourceLocation.parse(imageData.getTexture());
                         textureMap.put(imageData.getTexture(), tex);
                     }
                     // yIndexesToSkip.put(imageData.getPage(), new Whitespace(imageData.getX(), imageData.getY(),(int) (imageData.getScale() * imageData.getWidth()), (int) (imageData.getScale() * imageData.getHeight() * 0.8F)));
@@ -409,7 +410,7 @@ public abstract class GuiBasicBook extends Screen {
                 if (textureMap.get(tabulaRenderData.getTexture()) != null) {
                     texture = textureMap.get(tabulaRenderData.getTexture());
                 } else {
-                    texture = textureMap.put(tabulaRenderData.getTexture(), new ResourceLocation(tabulaRenderData.getTexture()));
+                    texture = textureMap.put(tabulaRenderData.getTexture(), ResourceLocation.parse(tabulaRenderData.getTexture()));
                 }
                 if (renderedTabulaModels.get(tabulaRenderData.getModel()) != null) {
                     model = renderedTabulaModels.get(tabulaRenderData.getModel());
@@ -431,7 +432,7 @@ public abstract class GuiBasicBook extends Screen {
         for (EntityRenderData data : entityRenders) {
             if (data.getPage() == this.currentPageCounter) {
                 Entity model = null;
-                EntityType type = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(data.getEntity()));
+                EntityType type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(data.getEntity()));
                 if (type != null) {
                     model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
                 }
@@ -464,7 +465,8 @@ public abstract class GuiBasicBook extends Screen {
                 if (item != null) {
                     float scale = (float) itemRenderData.getScale();
                     ItemStack stack = new ItemStack(item);
-                    if (itemRenderData.getItemTag() != null && !itemRenderData.getItemTag().isEmpty()) {
+                    // TODO: use components
+                    /*if (itemRenderData.getItemTag() != null && !itemRenderData.getItemTag().isEmpty()) {
                         CompoundTag tag = null;
                         try {
                             tag = TagParser.parseTag(itemRenderData.getItemTag());
@@ -472,7 +474,7 @@ public abstract class GuiBasicBook extends Screen {
                             e.printStackTrace();
                         }
                         stack.setTag(tag);
-                    }
+                    }*/
                     guiGraphics.pose().pushPose();
                     guiGraphics.pose().translate(k, l, 0);
                     guiGraphics.pose().scale(scale, scale, scale);

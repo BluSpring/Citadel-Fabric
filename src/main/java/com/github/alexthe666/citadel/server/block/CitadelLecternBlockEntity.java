@@ -4,7 +4,9 @@ import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
@@ -23,8 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class CitadelLecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
     private ItemStack book = ItemStack.EMPTY;
@@ -135,19 +136,20 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
         return this.hasBook() ? 1 : 0;
     }
 
-    public void load(CompoundTag tag) {
-        super.load(tag);
+    @Override
+    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadAdditional(tag, registries);
         if (tag.contains("Book", 10)) {
-            this.book = ItemStack.of(tag.getCompound("Book"));
+            this.book = ItemStack.CODEC.parse(NbtOps.INSTANCE, tag.getCompound("Book")).getOrThrow();
         } else {
             this.book = ItemStack.EMPTY;
         }
     }
 
-    protected void saveAdditional(CompoundTag tag) {
-        super.saveAdditional(tag);
+    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+        super.saveAdditional(tag, registries);
         if (!this.getBook().isEmpty()) {
-            tag.put("Book", this.getBook().save(new CompoundTag()));
+            tag.put("Book", ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, this.getBook()).getOrThrow());
         }
     }
 
@@ -164,7 +166,7 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
     }
 
     public CompoundTag getUpdateTag() {
-        return this.saveWithoutMetadata();
+        return this.saveWithoutMetadata(this.getLevel().getServer().registryAccess());
     }
 
     public Component getDisplayName() {

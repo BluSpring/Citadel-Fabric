@@ -6,7 +6,7 @@ public class ServerConfig {
 
     public final ForgeConfigSpec.BooleanValue citadelEntityTracker;
     public final ForgeConfigSpec.BooleanValue skipDatapackWarnings;
-    public final ForgeConfigSpec.DoubleValue chunkGenSpawnModifier;
+    public final ForgeConfigSpec.FloatValue chunkGenSpawnModifier;
     public final ForgeConfigSpec.BooleanValue aprilFoolsContent;
     public static boolean citadelEntityTrack;
     public static boolean skipWarnings;

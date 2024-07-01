@@ -1,6 +1,7 @@
 package com.github.alexthe666.citadel.server.world;
 
 import com.github.alexthe666.citadel.server.tick.ServerTickRateTracker;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
@@ -28,7 +29,7 @@ public class CitadelServerData extends SavedData {
         CitadelServerData fromMap = dataMap.get(server);
         if(fromMap == null){
             DimensionDataStorage storage = server.getLevel(Level.OVERWORLD).getDataStorage();
-            CitadelServerData data = storage.computeIfAbsent((tag) -> load(server, tag), () -> new CitadelServerData(server), IDENTIFIER);
+            CitadelServerData data = storage.computeIfAbsent(new SavedData.Factory<>(() -> new CitadelServerData(server), (tag, provider) -> load(server, tag), null), IDENTIFIER);
             if (data != null) {
                 data.setDirty();
             }
@@ -39,7 +40,7 @@ public class CitadelServerData extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         if(tickRateTracker != null){
             tag.put("TickRateTracker", tickRateTracker.toTag());
         }

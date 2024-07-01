@@ -5,15 +5,15 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.*;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Type;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class TabulaModelBlock
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -217,7 +217,7 @@ public class TabulaModelBlock
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     static final class Bookkeep
     {
         public final TabulaModelBlock model;
@@ -247,7 +247,7 @@ public class TabulaModelBlock
             }
 
             List<ItemOverride> list1 = this.getItemOverrides(p_deserialize_3_, jsonobject);
-            ResourceLocation resourcelocation = s.isEmpty() ? null : new ResourceLocation(s);
+            ResourceLocation resourcelocation = s.isEmpty() ? null : ResourceLocation.parse(s);
             return new TabulaModelBlock(resourcelocation, list, map, flag, true, itemcameratransforms, list1);
         }
 
@@ -309,7 +309,7 @@ public class TabulaModelBlock
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static class LoopException extends RuntimeException
     {
     }

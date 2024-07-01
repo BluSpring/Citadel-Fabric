@@ -1,13 +1,13 @@
 package com.github.alexthe666.citadel.server.tick.modifier;
 
 import com.github.alexthe666.citadel.server.entity.IModifiesTime;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraft.world.level.Level;
 
 public class LocalEntityTickRateModifier extends LocalTickRateModifier {
@@ -25,7 +25,7 @@ public class LocalEntityTickRateModifier extends LocalTickRateModifier {
     public LocalEntityTickRateModifier(CompoundTag tag) {
         super(tag);
         this.entityId = tag.getInt("EntityId");
-        EntityType type = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(tag.getString("EntityType")));
+        EntityType type = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.parse(tag.getString("EntityType")));
         this.expectedEntityType = type == null ? EntityType.PIG : type;
     }
 
@@ -52,7 +52,7 @@ public class LocalEntityTickRateModifier extends LocalTickRateModifier {
     public CompoundTag toTag() {
         CompoundTag tag = super.toTag();
         tag.putInt("EntityId", entityId);
-        ResourceLocation resourcelocation = ForgeRegistries.ENTITY_TYPES.getKey(this.expectedEntityType);
+        ResourceLocation resourcelocation = BuiltInRegistries.ENTITY_TYPE.getKey(this.expectedEntityType);
         if (resourcelocation != null) {
             tag.putString("EntityType", resourcelocation.toString());
         }

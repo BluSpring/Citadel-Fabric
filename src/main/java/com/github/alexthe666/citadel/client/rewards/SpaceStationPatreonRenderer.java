@@ -14,8 +14,8 @@ import net.minecraft.world.entity.LivingEntity;
 public class SpaceStationPatreonRenderer extends CitadelPatreonRenderer {
 
 
-    private static final ResourceLocation CITADEL_TEXTURE = new ResourceLocation("citadel", "textures/patreon/citadel_model.png");
-    private static final ResourceLocation CITADEL_LIGHTS_TEXTURE = new ResourceLocation("citadel", "textures/patreon/citadel_model_glow.png");
+    private static final ResourceLocation CITADEL_TEXTURE = ResourceLocation.fromNamespaceAndPath("citadel", "textures/patreon/citadel_model.png");
+    private static final ResourceLocation CITADEL_LIGHTS_TEXTURE = ResourceLocation.fromNamespaceAndPath("citadel", "textures/patreon/citadel_model_glow.png");
     private final ResourceLocation resourceLocation;
     private int[] colors;
 
@@ -40,8 +40,8 @@ public class SpaceStationPatreonRenderer extends CitadelPatreonRenderer {
         matrixStackIn.mulPose(Axis.XP.rotationDegrees(90));
         matrixStackIn.mulPose(Axis.YP.rotationDegrees(rotation * 10));
         ClientProxy.CITADEL_MODEL.resetToDefaultPose();
-        ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(RenderType.entityCutoutNoCull(CitadelTextureManager.getColorMappedTexture(resourceLocation, CITADEL_TEXTURE, colors))), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-        ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(RenderType.eyes(CITADEL_LIGHTS_TEXTURE)), light, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+        ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(RenderType.entityCutoutNoCull(CitadelTextureManager.getColorMappedTexture(resourceLocation, CITADEL_TEXTURE, colors))), light, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+        ClientProxy.CITADEL_MODEL.renderToBuffer(matrixStackIn, buffer.getBuffer(RenderType.eyes(CITADEL_LIGHTS_TEXTURE)), light, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
         matrixStackIn.popPose();
         matrixStackIn.popPose();
     }

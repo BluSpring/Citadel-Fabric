@@ -2,23 +2,23 @@ package com.github.alexthe666.citadel.client.gui;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
+import com.github.alexthe666.citadel.fabric.ForgeSlider;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
 
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class GuiCitadelPatreonConfig extends OptionsSubScreen {
 
     private ForgeSlider distSlider;
@@ -67,7 +67,7 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
     }
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(guiGraphics);
+        this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 16777215);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
@@ -127,6 +127,10 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
             changeButton.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(changeButton);
+    }
+
+    @Override
+    protected void addOptions() {
     }
 
     private  Component getTypeText(){

@@ -22,9 +22,9 @@ public abstract class BasicEntityModel<T extends Entity> extends EntityModel<T> 
     }
 
     @Override
-    public void renderToBuffer(PoseStack p_103013_, VertexConsumer p_103014_, int p_103015_, int p_103016_, float p_103017_, float p_103018_, float p_103019_, float p_103020_) {
+    public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int color) {
         this.parts().forEach((p_103030_) -> {
-            p_103030_.render(p_103013_, p_103014_, p_103015_, p_103016_, p_103017_, p_103018_, p_103019_, p_103020_);
+            p_103030_.render(poseStack, buffer, packedLight, packedOverlay, color);
         });
     }
 

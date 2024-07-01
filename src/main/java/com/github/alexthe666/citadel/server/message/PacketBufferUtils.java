@@ -5,8 +5,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.Validate;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -124,33 +124,6 @@ public class PacketBufferUtils {
         Validate.isTrue(varIntByteCount(utf8Bytes.length) < 3, "The string is too long for this encoding.");
         writeVarInt(to, utf8Bytes.length, 2);
         to.writeBytes(utf8Bytes);
-    }
-
-    /**
-     * Write an {@link ItemStack} using minecraft compatible encoding.
-     *
-     * @param to    The buffer to write to
-     * @param stack The itemstack to write
-     */
-    public static void writeItemStack(ByteBuf to, ItemStack stack) {
-        FriendlyByteBuf pb = new FriendlyByteBuf(to);
-        pb.writeItem(stack);
-    }
-
-    /**
-     * Read an {@link ItemStack} from the byte buffer provided. It uses the minecraft encoding.
-     *
-     * @param from The buffer to read from
-     * @return The itemstack read
-     */
-    public static ItemStack readItemStack(ByteBuf from) {
-        FriendlyByteBuf pb = new FriendlyByteBuf(from);
-        try {
-            return pb.readItem();
-        } catch (Exception e) {
-            // Unpossible?
-            throw new RuntimeException(e);
-        }
     }
 
     /**
