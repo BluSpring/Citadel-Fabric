@@ -1,8 +1,9 @@
 plugins {
     id 'java'
     id 'idea'
-    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'io.github.goooler.shadow' version '8.1.7' // Use Shadow fork that supports Java 21
     id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'maven-publish'
 }
 
 version = "${mod_version}-${mc_version}"
@@ -164,7 +165,35 @@ jar {
 //builds the jar with shadowed dependencies
 shadowJar {
     configurations = [project.configurations.shadow]
-    duplicatesStrategy 'exclude'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     relocate 'net.sourceforge.jaad', 'com.github.alexthe666.citadel.repack.jaad'
     relocate 'org.jcodec', 'com.github.alexthe666.citadel.repack.jcodec'
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+remapJar {
+    inputFile.set shadowJar.archiveFile
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn shadowJar
+    archiveClassifier.set(null)
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact, not for
+        // retrieving dependencies.
+    }
 }
