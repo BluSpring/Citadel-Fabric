@@ -1,0 +1,38 @@
+{
+    "schemaVersion": 1,
+    "id": "citadel",
+    "version": "${version}",
+    "name": "Citadel (Fabric)",
+    "description": "A shared code library for many of Alexthe666's mods. Code used from LLibrary with permission.\nUnofficial Fabric 1.21 port by BluSpring, for use in Crimecraft S5.",
+    "authors": [
+        "Alexthe666",
+        "Gegy1000",
+        "BluSpring"
+    ],
+    "contact": {
+        "sources": "https://github.com/BluSpring/Citadel-Fabric"
+    },
+    "license": "LGPL",
+    "icon": "citadel.png",
+    "environment": "*",
+    "depends": {
+        "fabricloader": ">=${loader_version}",
+        "fabric": ">=${fabric_version}",
+        "minecraft": "${minecraft_version}",
+        "architectury": ">=${architectury_version}"
+    },
+    "custom": {
+        "modmenu": {
+            "badges": [ "library" ]
+        }
+    },
+    "accessWidener": "citadel.accesswidener",
+    "entrypoints": {
+        "main": [
+            "com.github.alexthe666.citadel.Citadel"
+        ]
+    },
+    "mixins": [
+        "citadel.mixins.json"
+    ]
+}

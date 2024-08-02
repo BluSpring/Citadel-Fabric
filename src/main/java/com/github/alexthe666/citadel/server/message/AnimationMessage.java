@@ -1,12 +1,20 @@
 package com.github.alexthe666.citadel.server.message;
 
 import com.github.alexthe666.citadel.Citadel;
+import me.pepperbell.simplenetworking.SimpleChannel;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
 
 import java.util.function.Supplier;
 
-public class AnimationMessage {
+public class AnimationMessage implements CitadelPacket {
 
     private int entityID;
     private int index;
@@ -16,13 +24,28 @@ public class AnimationMessage {
         this.index = index;
     }
 
+    @Override
+    public void handle(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl listener, PacketSender responseSender, SimpleChannel channel) {
+        Handler.handle(this);
+    }
+
+    @Environment(EnvType.CLIENT)
+    @Override
+    public void handle(Minecraft client, ClientPacketListener listener, PacketSender responseSender, SimpleChannel channel) {
+        Handler.handle(this);
+    }
+
+    @Override
+    public void encode(FriendlyByteBuf buf) {
+        write(this, buf);
+    }
+
     public static class Handler {
         public Handler() {
         }
 
-        public static void handle(AnimationMessage message, Supplier<NetworkEvent.Context> context) {
+        public static void handle(AnimationMessage message) {
             Citadel.PROXY.handleAnimationPacket(message.entityID, message.index);
-            context.get().setPacketHandled(true);
         }
     }
 

@@ -10,8 +10,8 @@ import org.joml.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.core.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Random;
 
@@ -19,7 +19,7 @@ import java.util.Random;
  * @since 1.9.0
  * Duplicate of ModelPart class which is not final
  */
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class BasicModelPart {
     public float textureWidth = 64.0F;
     public float textureHeight = 32.0F;
@@ -193,7 +193,7 @@ public class BasicModelPart {
         return this.cubeList.get(randomIn.nextInt(this.cubeList.size()));
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     public static class ModelBox {
         private final BasicModelPart.TexturedQuad[] quads;
         public final float posX1;
@@ -252,7 +252,7 @@ public class BasicModelPart {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     static class PositionTextureVertex {
         public final Vector3f position;
         public final float textureU;
@@ -273,7 +273,7 @@ public class BasicModelPart {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @Environment(EnvType.CLIENT)
     static class TexturedQuad {
         public final BasicModelPart.PositionTextureVertex[] vertexPositions;
         public final Vector3f normal;

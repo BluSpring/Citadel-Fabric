@@ -5,6 +5,7 @@ import com.github.alexthe666.citadel.server.block.LecternBooks;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.joml.Vector3f;
 import net.minecraft.client.model.BookModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -15,7 +16,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class CitadelLecternRenderer implements BlockEntityRenderer<CitadelLecternBlockEntity> {
     private final BookModel bookModel;
@@ -29,7 +29,7 @@ public class CitadelLecternRenderer implements BlockEntityRenderer<CitadelLecter
     public void render(CitadelLecternBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int i, int j) {
         BlockState blockstate = blockEntity.getBlockState();
         if (blockstate.getValue(LecternBlock.HAS_BOOK)) {
-            LecternBooks.BookData bookData = LecternBooks.BOOKS.getOrDefault(ForgeRegistries.ITEMS.getKey(blockEntity.getBook().getItem()), EMPTY_BOOK_DATA);
+            LecternBooks.BookData bookData = LecternBooks.BOOKS.getOrDefault(BuiltInRegistries.ITEM.getKey(blockEntity.getBook().getItem()), EMPTY_BOOK_DATA);
             poseStack.pushPose();
             poseStack.translate(0.5D, 1.0625D, 0.5D);
             float f = blockstate.getValue(LecternBlock.FACING).getClockWise().toYRot();

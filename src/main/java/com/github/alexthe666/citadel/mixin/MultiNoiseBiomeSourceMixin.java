@@ -11,8 +11,6 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,7 +27,7 @@ public class MultiNoiseBiomeSourceMixin implements IMultiNoiseBiomeSourceAccesso
 
     @Inject(at = @At("HEAD"),
             remap = CitadelConstants.REMAPREFS,
-            method = "Lnet/minecraft/world/level/biome/MultiNoiseBiomeSource;getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;",
+            method = "getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;",
             cancellable = true
     )
     private void citadel_getNoiseBiomeCoords(int x, int y, int z, Climate.Sampler sampler, CallbackInfoReturnable<Holder<Biome>> cir) {
@@ -41,8 +39,7 @@ public class MultiNoiseBiomeSourceMixin implements IMultiNoiseBiomeSourceAccesso
         float f4 = Climate.unquantizeCoord(targetPoint.weirdness());
         float f5 = Climate.unquantizeCoord(targetPoint.depth());
         EventReplaceBiome event = new EventReplaceBiome((ExpandedBiomeSource) this, cir.getReturnValue(), x, y, z, f, f1, f2, f3, f4, f5, lastSampledWorldSeed);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Event.Result.ALLOW) {
+        if (EventReplaceBiome.EVENT.invoker().onReplaceBiome(event).isTrue()) {
             cir.setReturnValue(event.getBiomeToGenerate());
         }
     }

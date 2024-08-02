@@ -1,5 +1,8 @@
 package com.github.alexthe666.citadel.server.event;
 
+import dev.architectury.event.Event;
+import dev.architectury.event.EventFactory;
+import dev.architectury.event.EventResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.random.WeightedRandomList;
@@ -7,13 +10,16 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraftforge.eventbus.api.Event;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Event.HasResult
-public class EventMergeStructureSpawns extends Event{
+public class EventMergeStructureSpawns {
+    public static final Event<MergeStructureSpawnsCallback> EVENT = EventFactory.createEventResult();
+
+    public interface MergeStructureSpawnsCallback {
+        EventResult onMergeStructureSpawns(EventMergeStructureSpawns event);
+    }
 
     private StructureManager structureManager;
     private BlockPos pos;

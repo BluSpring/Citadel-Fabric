@@ -1,7 +1,8 @@
 package com.github.alexthe666.citadel.web;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 public class WebHelper {
 
     @Nullable
-    public static BufferedReader getURLContents(@Nonnull String urlString, @Nonnull String backupFileLoc){
+    public static BufferedReader getURLContents(@NotNull String urlString, @NotNull String backupFileLoc){
         try {
             URL url = new URL(urlString);
             URLConnection connection = url.openConnection();

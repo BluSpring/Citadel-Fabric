@@ -1,13 +1,19 @@
 package com.github.alexthe666.citadel.server.event;
 
 import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
+import dev.architectury.event.Event;
+import dev.architectury.event.EventFactory;
+import dev.architectury.event.EventResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraftforge.eventbus.api.Event;
 
-@Event.HasResult
-public class EventReplaceBiome extends Event {
+public class EventReplaceBiome {
+    public static final Event<ReplaceBiomeCallback> EVENT = EventFactory.createEventResult();
+
+    public interface ReplaceBiomeCallback {
+        EventResult onReplaceBiome(EventReplaceBiome event);
+    }
 
     public Holder<Biome> biomeToGenerate;
     public ExpandedBiomeSource biomeSource;

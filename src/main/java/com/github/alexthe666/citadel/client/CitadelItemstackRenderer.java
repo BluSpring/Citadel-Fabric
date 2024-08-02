@@ -4,8 +4,8 @@ import com.github.alexthe666.citadel.Citadel;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Matrix4f;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -48,7 +48,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             ItemStack toRender = null;
             if (stack.getTag() != null && stack.getTag().contains("DisplayItem")) {
                 String displayID = stack.getTag().getString("DisplayItem");
-                toRender = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(displayID)));
+                toRender = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(displayID)));
                 if (stack.getTag().contains("DisplayItemNBT")) {
                     try {
                         toRender.setTag(stack.getTag().getCompound("DisplayItemNBT"));
@@ -92,10 +92,10 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             MobEffect effect;
             if (stack.getTag() != null && stack.getTag().contains("DisplayEffect")) {
                 String displayID = stack.getTag().getString("DisplayEffect");
-                effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(displayID));
+                effect = BuiltInRegistries.MOB_EFFECT.get(new ResourceLocation(displayID));
             } else {
                 if(mobEffectList == null){
-                    mobEffectList = ForgeRegistries.MOB_EFFECTS.getValues().stream().toList();
+                    mobEffectList = BuiltInRegistries.MOB_EFFECT.stream().toList();
                 }
                 int size = mobEffectList.size();
                 int time = (int) (Util.getMillis() / 500);

@@ -1,0 +1,26 @@
+accessWidener v2 named
+
+accessible field net/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool templates Lit/unimi/dsi/fastutil/objects/ObjectArrayList;
+mutable field net/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool templates Lit/unimi/dsi/fastutil/objects/ObjectArrayList;
+
+accessible field net/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool rawTemplates Ljava/util/List;
+mutable field net/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool rawTemplates Ljava/util/List;
+
+accessible field net/minecraft/client/gui/screens/BackupConfirmScreen listener Lnet/minecraft/client/gui/screens/BackupConfirmScreen$Listener;
+mutable field net/minecraft/client/gui/screens/BackupConfirmScreen listener Lnet/minecraft/client/gui/screens/BackupConfirmScreen$Listener;
+
+accessible field net/minecraft/client/gui/screens/ConfirmScreen callback Lit/unimi/dsi/fastutil/booleans/BooleanConsumer;
+mutable field net/minecraft/client/gui/screens/ConfirmScreen callback Lit/unimi/dsi/fastutil/booleans/BooleanConsumer;
+
+accessible field net/minecraft/client/Minecraft timer Lnet/minecraft/client/Timer;
+
+accessible field net/minecraft/client/Timer msPerTick F
+mutable field net/minecraft/client/Timer msPerTick F
+
+accessible method net/minecraft/client/player/AbstractClientPlayer getPlayerInfo ()Lnet/minecraft/client/multiplayer/PlayerInfo;
+
+accessible field net/minecraft/client/multiplayer/PlayerInfo textureLocations Ljava/util/Map;
+mutable field net/minecraft/client/multiplayer/PlayerInfo textureLocations Ljava/util/Map;
+
+accessible field net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator settings Lnet/minecraft/core/Holder;
+mutable field net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator settings Lnet/minecraft/core/Holder;

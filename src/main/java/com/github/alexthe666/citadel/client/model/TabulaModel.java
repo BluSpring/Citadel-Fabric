@@ -6,8 +6,8 @@ import com.github.alexthe666.citadel.client.model.container.TabulaCubeGroupConta
 import com.github.alexthe666.citadel.client.model.container.TabulaModelContainer;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import java.util.Map;
  * @author gegy1000
  * @since 1.0.0
  */
-@OnlyIn(Dist.CLIENT)
+@Environment(EnvType.CLIENT)
 public class TabulaModel extends AdvancedEntityModel {
     protected Map<String, AdvancedModelBox> cubes = new HashMap<>();
     protected List<AdvancedModelBox> rootBoxes = new ArrayList<>();

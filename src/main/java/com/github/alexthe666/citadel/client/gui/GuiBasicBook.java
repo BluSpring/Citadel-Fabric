@@ -13,6 +13,8 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.math.Axis;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.registries.BuiltInRegistries;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -43,10 +45,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.io.IOUtils;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -324,7 +324,7 @@ public abstract class GuiBasicBook extends Screen {
     }
 
     private Item getItemByRegistryName(String registryName) {
-        return ForgeRegistries.ITEMS.getValue(new ResourceLocation(registryName));
+        return BuiltInRegistries.ITEM.get(new ResourceLocation(registryName));
     }
 
     private Recipe getRecipeByName(String registryName) {
@@ -431,7 +431,7 @@ public abstract class GuiBasicBook extends Screen {
         for (EntityRenderData data : entityRenders) {
             if (data.getPage() == this.currentPageCounter) {
                 Entity model = null;
-                EntityType type = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(data.getEntity()));
+                EntityType type = BuiltInRegistries.ENTITY_TYPE.get(new ResourceLocation(data.getEntity()));
                 if (type != null) {
                     model = renderedEntites.putIfAbsent(data.getEntity(), type.create(Minecraft.getInstance().level));
                 }

@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.client.gui;
 
+import com.github.alexthe666.citadel.fabric.extensions.ForegroundColorExtension;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,7 +17,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
 
-public class LinkButton extends Button {
+public class LinkButton extends Button implements ForegroundColorExtension {
 
     public ItemStack previewStack;
     public GuiBasicBook book;
@@ -35,17 +35,6 @@ public class LinkButton extends Button {
     @Override
     public int getFGColor() {
         return this.isHovered ? book.getWidgetColor() : this.active ? 0X94745A : 10526880;
-    }
-
-    private int getTextureY() {
-        int i = 1;
-        if (!this.active) {
-            i = 0;
-        } else if (this.isHoveredOrFocused()) {
-            i = 2;
-        }
-
-        return 46 + i * 20;
     }
 
 
@@ -86,7 +75,7 @@ public class LinkButton extends Button {
 
     public static void drawTextOf(GuiGraphics guiGraphics, Font font, Component component, int x, int y, int color) {
         FormattedCharSequence formattedcharsequence = component.getVisualOrderText();
-        guiGraphics.drawString(font, formattedcharsequence, (float)(x - font.width(formattedcharsequence) / 2), (float)y, color, false);
+        guiGraphics.drawString(font, formattedcharsequence, (x - font.width(formattedcharsequence) / 2), y, color, false);
     }
 
     @Override

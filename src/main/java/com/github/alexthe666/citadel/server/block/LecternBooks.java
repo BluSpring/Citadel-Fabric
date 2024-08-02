@@ -2,12 +2,11 @@ package com.github.alexthe666.citadel.server.block;
 
 import com.github.alexthe666.citadel.Citadel;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +20,7 @@ public class LecternBooks {
     }
 
     public static boolean isLecternBook(ItemStack stack){
-        return BOOKS.containsKey(ForgeRegistries.ITEMS.getKey(stack.getItem()));
+        return BOOKS.containsKey(BuiltInRegistries.ITEM.getKey(stack.getItem()));
     }
 
     public static class BookData{

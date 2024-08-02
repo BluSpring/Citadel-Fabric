@@ -10,23 +10,32 @@ import com.github.alexthe666.citadel.server.CitadelEvents;
 import com.github.alexthe666.citadel.server.block.CitadelLecternBlock;
 import com.github.alexthe666.citadel.server.block.CitadelLecternBlockEntity;
 import com.github.alexthe666.citadel.server.block.LecternBooks;
-import com.github.alexthe666.citadel.server.generation.SpawnProbabilityModifier;
 import com.github.alexthe666.citadel.server.generation.SurfaceRulesManager;
 import com.github.alexthe666.citadel.server.generation.VillageHouseManager;
-import com.github.alexthe666.citadel.server.message.AnimationMessage;
-import com.github.alexthe666.citadel.server.message.DanceJukeboxMessage;
-import com.github.alexthe666.citadel.server.message.PropertiesMessage;
-import com.github.alexthe666.citadel.server.message.SyncClientTickRateMessage;
+import com.github.alexthe666.citadel.server.message.*;
 import com.github.alexthe666.citadel.server.world.ExpandedBiomeSource;
 import com.github.alexthe666.citadel.server.world.ExpandedBiomes;
 import com.github.alexthe666.citadel.web.WebHelper;
 import com.mojang.serialization.Codec;
+import fuzs.forgeconfigapiport.api.config.v2.ForgeConfigRegistry;
+import fuzs.forgeconfigapiport.api.config.v2.ModConfigEvents;
+import io.github.fabricators_of_create.porting_lib.util.LazyRegistrar;
+import io.github.fabricators_of_create.porting_lib.util.RegistryObject;
+import io.github.fabricators_of_create.porting_lib.util.ServerLifecycleHooks;
+import me.pepperbell.simplenetworking.SimpleChannel;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
@@ -38,29 +47,7 @@ import net.minecraft.world.level.block.entity.LecternBlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.SurfaceRules;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.world.BiomeModifier;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
-import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -71,22 +58,16 @@ import java.util.*;
 
 ;
 
-@Mod("citadel")
-public class Citadel {
+public class Citadel implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger("citadel");
     private static final String PROTOCOL_VERSION = Integer.toString(1);
     private static final ResourceLocation PACKET_NETWORK_NAME = new ResourceLocation("citadel:main_channel");
-    public static final SimpleChannel NETWORK_WRAPPER = NetworkRegistry.ChannelBuilder
-            .named(PACKET_NETWORK_NAME)
-            .clientAcceptedVersions(PROTOCOL_VERSION::equals)
-            .serverAcceptedVersions(PROTOCOL_VERSION::equals)
-            .networkProtocolVersion(() -> PROTOCOL_VERSION)
-            .simpleChannel();
-    public static ServerProxy PROXY = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static final SimpleChannel NETWORK_WRAPPER = new SimpleChannel(PACKET_NETWORK_NAME);
+    public static ServerProxy PROXY = FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT ? new ClientProxy() : new ServerProxy();
     public static List<String> PATREONS = new ArrayList<>();
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "citadel");
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, "citadel");
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, "citadel");
+    public static final LazyRegistrar<Item> ITEMS = LazyRegistrar.create(BuiltInRegistries.ITEM, "citadel");
+    public static final LazyRegistrar<Block> BLOCKS = LazyRegistrar.create(BuiltInRegistries.BLOCK, "citadel");
+    public static final LazyRegistrar<BlockEntityType<?>> BLOCK_ENTITIES = LazyRegistrar.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, "citadel");
 
     public static final RegistryObject<Item> DEBUG_ITEM = ITEMS.register("debug", () -> new ItemCitadelDebug(new Item.Properties()));
     public static final RegistryObject<Item> CITADEL_BOOK = ITEMS.register("citadel_book", () -> new ItemCitadelBook(new Item.Properties().stacksTo(1)));
@@ -99,48 +80,61 @@ public class Citadel {
     public static final RegistryObject<BlockEntityType<CitadelLecternBlockEntity>> LECTERN_BE = BLOCK_ENTITIES.register("lectern", () -> BlockEntityType.Builder.of(CitadelLecternBlockEntity::new, LECTERN.get()).build(null));
 
 
-    public Citadel() {
-        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-        bus.addListener(this::setup);
-        bus.addListener(this::enqueueIMC);
-        bus.addListener(this::processIMC);
-        bus.addListener(this::doClientStuff);
-        bus.addListener(this::onModConfigEvent);
-        ITEMS.register(bus);
-        BLOCKS.register(bus);
-        BLOCK_ENTITIES.register(bus);
-        final DeferredRegister<Codec<? extends BiomeModifier>> serializers = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "citadel");
+    public void onInitialize() {
+        ModConfigEvents.loading("citadel").register(this::onModConfigEvent);
+        ModConfigEvents.reloading("citadel").register(this::onModConfigEvent);
+        ModConfigEvents.unloading("citadel").register(this::onModConfigEvent);
+        ITEMS.register();
+        BLOCKS.register();
+        BLOCK_ENTITIES.register();
+        /*final DeferredRegister<Codec<? extends BiomeModifier>> serializers = DeferredRegister.create(ForgeRegistries.Keys.BIOME_MODIFIER_SERIALIZERS, "citadel");
         serializers.register(bus);
         serializers.register("mob_spawn_probability", SpawnProbabilityModifier::makeCodec);
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(PROXY);
-        final ModLoadingContext modLoadingContext = ModLoadingContext.get();
-        modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
-        MinecraftForge.EVENT_BUS.register(new CitadelEvents());
+        final ModLoadingContext modLoadingContext = ModLoadingContext.get();*/
+        ForgeConfigRegistry.INSTANCE.register("citadel", ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
+        new CitadelEvents();
+
+        ServerLifecycleEvents.SERVER_STARTING.register(server -> {
+            onServerAboutToStart(server);
+        });
+
+        this.setup();
+        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+            this.doClientStuff();
+        }
     }
 
-    public static <MSG> void sendMSGToServer(MSG message) {
+    public static <MSG extends CitadelPacket> void sendMSGToServer(MSG message) {
         NETWORK_WRAPPER.sendToServer(message);
     }
 
-    public static <MSG> void sendMSGToAll(MSG message) {
+    public static <MSG extends CitadelPacket> void sendMSGToAll(MSG message) {
         for (ServerPlayer player : ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers()) {
             sendNonLocal(message, player);
         }
     }
 
-    public static <MSG> void sendNonLocal(MSG msg, ServerPlayer player) {
-        NETWORK_WRAPPER.sendTo(msg, player.connection.connection, NetworkDirection.PLAY_TO_CLIENT);
+    public static <MSG extends CitadelPacket> void sendNonLocal(MSG msg, ServerPlayer player) {
+        NETWORK_WRAPPER.sendToClient(msg, player);
     }
 
-    private void setup(final FMLCommonSetupEvent event) {
+    private void setup() {
         PROXY.onPreInit();
         LecternBooks.init();
         int packetsRegistered = 0;
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, PropertiesMessage.class, PropertiesMessage::write, PropertiesMessage::read, PropertiesMessage.Handler::handle);
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, AnimationMessage.class, AnimationMessage::write, AnimationMessage::read, AnimationMessage.Handler::handle);
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, SyncClientTickRateMessage.class, SyncClientTickRateMessage::write, SyncClientTickRateMessage::read, SyncClientTickRateMessage.Handler::handle);
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, DanceJukeboxMessage.class, DanceJukeboxMessage::write, DanceJukeboxMessage::read, DanceJukeboxMessage.Handler::handle);
+        NETWORK_WRAPPER.registerS2CPacket(PropertiesMessage.class, packetsRegistered++, PropertiesMessage::read);
+        NETWORK_WRAPPER.registerC2SPacket(PropertiesMessage.class, packetsRegistered++, PropertiesMessage::read);
+
+        NETWORK_WRAPPER.registerS2CPacket(AnimationMessage.class, packetsRegistered++, AnimationMessage::read);
+        NETWORK_WRAPPER.registerC2SPacket(AnimationMessage.class, packetsRegistered++, AnimationMessage::read);
+
+        NETWORK_WRAPPER.registerS2CPacket(SyncClientTickRateMessage.class, packetsRegistered++, SyncClientTickRateMessage::read);
+        NETWORK_WRAPPER.registerC2SPacket(SyncClientTickRateMessage.class, packetsRegistered++, SyncClientTickRateMessage::read);
+
+        NETWORK_WRAPPER.registerS2CPacket(DanceJukeboxMessage.class, packetsRegistered++, DanceJukeboxMessage::read);
+        NETWORK_WRAPPER.registerC2SPacket(DanceJukeboxMessage.class, packetsRegistered++, DanceJukeboxMessage::read);
         BufferedReader urlContents = WebHelper.getURLContents("https://raw.githubusercontent.com/Alex-the-666/Citadel/master/src/main/resources/assets/citadel/patreon.txt", "assets/citadel/patreon.txt");
         if (urlContents != null) {
             try {
@@ -154,9 +148,7 @@ public class Citadel {
         } else LOGGER.warn("Failed to load patreon contributor perks");
     }
 
-    @SubscribeEvent
-    public void onModConfigEvent(final ModConfigEvent event) {
-        final ModConfig config = event.getConfig();
+    public void onModConfigEvent(final ModConfig config) {
         // Rebake the configs when they change
         ServerConfig.skipWarnings = ConfigHolder.SERVER.skipDatapackWarnings.get();
         if (config.getSpec() == ConfigHolder.SERVER_SPEC) {
@@ -169,21 +161,15 @@ public class Citadel {
 
 
 
-    private void doClientStuff(final FMLClientSetupEvent event) {
-        event.enqueueWork(() -> PROXY.onClientInit());
+    private void doClientStuff() {
+        ClientLifecycleEvents.CLIENT_STARTED.register((mc) -> {
+            PROXY.onClientInit();
+            NETWORK_WRAPPER.initClientListener();
+        });
     }
 
-    private void enqueueIMC(final InterModEnqueueEvent event) {
-
-    }
-
-    private void processIMC(final InterModProcessEvent event) {
-
-    }
-
-    @SubscribeEvent
-    public void onServerAboutToStart(ServerAboutToStartEvent event) {
-        RegistryAccess registryAccess = event.getServer().registryAccess();
+    public void onServerAboutToStart(MinecraftServer server) {
+        RegistryAccess registryAccess = server.registryAccess();
         VillageHouseManager.addAllHouses(registryAccess);
         Registry<Biome> allBiomes = registryAccess.registryOrThrow(Registries.BIOME);
         Registry<LevelStem> levelStems = registryAccess.registryOrThrow(Registries.LEVEL_STEM);

@@ -1,11 +1,11 @@
 package com.github.alexthe666.citadel.client.gui.data;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class LinkData {
     private String linked_page;
@@ -70,7 +70,7 @@ public class LinkData {
         if(item == null || item.isEmpty()){
             return ItemStack.EMPTY;
         }else{
-            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation(item)));
+            ItemStack stack = new ItemStack(BuiltInRegistries.ITEM.get(new ResourceLocation(item)));
             if (item_tag != null && !item_tag.isEmpty()) {
                 CompoundTag tag = null;
                 try {
