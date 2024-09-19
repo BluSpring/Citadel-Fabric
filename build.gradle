@@ -88,6 +88,7 @@ repositories{
     }
 
     mavenCentral()
+    mavenLocal()
     maven {
         url "https://maven.parchmentmc.org"
     }
@@ -133,7 +134,7 @@ dependencies {
     modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forge_config_version}"
 
     //jaadec fork by yours truly to decode mp4 audio
-    shadow ('com.github.AlexModGuy:JAADec:master-SNAPSHOT') {
+    shadow ('net.sourceforge.jaadec:JAADec:0.8.8') {
         ['commons-logging', 'org.slf4j'].each {
             exclude group: "$it"
         }

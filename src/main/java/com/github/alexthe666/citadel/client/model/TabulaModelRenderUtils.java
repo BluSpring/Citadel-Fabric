@@ -21,10 +21,10 @@ public class TabulaModelRenderUtils {
             return new TabulaModelRenderUtils.PositionTextureVertex(this.position, p_78240_1_, p_78240_2_);
         }
 
-        public PositionTextureVertex(Vector3f p_i225952_1_, float p_i225952_2_, float p_i225952_3_) {
-            this.position = p_i225952_1_;
-            this.textureU = p_i225952_2_;
-            this.textureV = p_i225952_3_;
+        public PositionTextureVertex(Vector3f position, float u, float v) {
+            this.position = position;
+            this.textureU = u;
+            this.textureV = v;
         }
     }
 
@@ -33,25 +33,25 @@ public class TabulaModelRenderUtils {
         public final TabulaModelRenderUtils.PositionTextureVertex[] vertexPositions;
         public final Vector3f normal;
 
-        public TexturedQuad(TabulaModelRenderUtils.PositionTextureVertex[] p_i225951_1_, float p_i225951_2_, float p_i225951_3_, float p_i225951_4_, float p_i225951_5_, float p_i225951_6_, float p_i225951_7_, boolean p_i225951_8_, Direction p_i225951_9_) {
-            this.vertexPositions = p_i225951_1_;
-            float lvt_10_1_ = 0.0F / p_i225951_6_;
-            float lvt_11_1_ = 0.0F / p_i225951_7_;
-            p_i225951_1_[0] = p_i225951_1_[0].setTextureUV(p_i225951_4_ / p_i225951_6_ - lvt_10_1_, p_i225951_3_ / p_i225951_7_ + lvt_11_1_);
-            p_i225951_1_[1] = p_i225951_1_[1].setTextureUV(p_i225951_2_ / p_i225951_6_ + lvt_10_1_, p_i225951_3_ / p_i225951_7_ + lvt_11_1_);
-            p_i225951_1_[2] = p_i225951_1_[2].setTextureUV(p_i225951_2_ / p_i225951_6_ + lvt_10_1_, p_i225951_5_ / p_i225951_7_ - lvt_11_1_);
-            p_i225951_1_[3] = p_i225951_1_[3].setTextureUV(p_i225951_4_ / p_i225951_6_ - lvt_10_1_, p_i225951_5_ / p_i225951_7_ - lvt_11_1_);
+        public TexturedQuad(TabulaModelRenderUtils.PositionTextureVertex[] vertices, float minU, float minV, float maxU, float maxV, float texWidth, float texHeight, boolean p_i225951_8_, Direction side) {
+            this.vertexPositions = vertices;
+            float lvt_10_1_ = 0.0F / texWidth;
+            float lvt_11_1_ = 0.0F / texHeight;
+            vertices[0] = vertices[0].setTextureUV(maxU / texWidth - lvt_10_1_, minV / texHeight + lvt_11_1_);
+            vertices[1] = vertices[1].setTextureUV(minU / texWidth + lvt_10_1_, minV / texHeight + lvt_11_1_);
+            vertices[2] = vertices[2].setTextureUV(minU / texWidth + lvt_10_1_, maxV / texHeight - lvt_11_1_);
+            vertices[3] = vertices[3].setTextureUV(maxU / texWidth - lvt_10_1_, maxV / texHeight - lvt_11_1_);
             if (p_i225951_8_) {
-                int lvt_12_1_ = p_i225951_1_.length;
+                int verticesSize = vertices.length;
 
-                for(int lvt_13_1_ = 0; lvt_13_1_ < lvt_12_1_ / 2; ++lvt_13_1_) {
-                    TabulaModelRenderUtils.PositionTextureVertex lvt_14_1_ = p_i225951_1_[lvt_13_1_];
-                    p_i225951_1_[lvt_13_1_] = p_i225951_1_[lvt_12_1_ - 1 - lvt_13_1_];
-                    p_i225951_1_[lvt_12_1_ - 1 - lvt_13_1_] = lvt_14_1_;
+                for(int i = 0; i < verticesSize / 2; ++i) {
+                    TabulaModelRenderUtils.PositionTextureVertex vertex = vertices[i];
+                    vertices[i] = vertices[verticesSize - 1 - i];
+                    vertices[verticesSize - 1 - i] = vertex;
                 }
             }
 
-            this.normal = p_i225951_9_.step();
+            this.normal = side.step();
             if (p_i225951_8_) {
                 this.normal.mul(-1.0F, 1.0F, 1.0F);
             }
