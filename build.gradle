@@ -3,6 +3,7 @@ plugins {
     id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'idea'
     id 'com.gradleup.shadow' version '8.3.6'
+    id 'maven-publish'
 }
 
 configurations {
@@ -175,3 +176,16 @@ shadowJar {
 assemble.dependsOn(shadowJar)
 
 jar.finalizedBy('remapJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact remapJar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
