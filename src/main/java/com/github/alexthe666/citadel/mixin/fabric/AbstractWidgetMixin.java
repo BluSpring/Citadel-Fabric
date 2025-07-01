@@ -12,7 +12,7 @@ public class AbstractWidgetMixin implements ForegroundColorExtension {
     protected int packedFGColor = ForegroundColorExtension.UNSET_FG_COLOR;
 
     @Override
-    public int getFGColor() {
+    public int citadel$getFGColor() {
         if (packedFGColor != ForegroundColorExtension.UNSET_FG_COLOR)
             return packedFGColor;
 
@@ -20,12 +20,12 @@ public class AbstractWidgetMixin implements ForegroundColorExtension {
     }
 
     @Override
-    public void setFGColor(int color) {
+    public void citadel$setFGColor(int color) {
         packedFGColor = color;
     }
 
     @Override
-    public void clearFGColor() {
+    public void citadel$clearFGColor() {
         packedFGColor = ForegroundColorExtension.UNSET_FG_COLOR;
     }
 }

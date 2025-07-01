@@ -33,7 +33,7 @@ public class LinkButton extends Button implements ForegroundColorExtension {
     }
 
     @Override
-    public int getFGColor() {
+    public int citadel$getFGColor() {
         return this.isHovered ? book.getWidgetColor() : this.active ? 0X94745A : 10526880;
     }
 
@@ -65,7 +65,7 @@ public class LinkButton extends Button implements ForegroundColorExtension {
         }
 
         this.renderBg(poseStack, minecraft, guiX, guiY);
-        int j = getFGColor();
+        int j = citadel$getFGColor();
         int itemTextOffset = previewStack.isEmpty() ? 0 : 8;
         if(!previewStack.isEmpty()){
             ItemRenderer itemRenderer =  Minecraft.getInstance().getItemRenderer();

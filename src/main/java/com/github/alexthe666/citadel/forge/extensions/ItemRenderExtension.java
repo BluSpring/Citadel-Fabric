@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.function.Consumer;
 
 public interface ItemRenderExtension {
-    default Object getRenderPropertiesInternal() {
+    default Object citadel$getRenderPropertiesInternal() {
         return IClientItemExtensions.DEFAULT;
     }
     default String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type)
@@ -15,5 +15,5 @@ public interface ItemRenderExtension {
         return null;
     }
 
-    default void initializeClient(Consumer<IClientItemExtensions> consumer) {}
+    default void citadel$initializeClient(Consumer<IClientItemExtensions> consumer) {}
 }

@@ -15,7 +15,7 @@ public class ItemMixin implements ItemRenderExtension {
     @Inject(method = "<init>", at = @At("TAIL"))
     public void citadel$initClient(Item.Properties properties, CallbackInfo ci) {
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            initializeClient((props) -> {
+            citadel$initializeClient((props) -> {
                 this.renderProperties = props;
             });
         }
@@ -25,7 +25,7 @@ public class ItemMixin implements ItemRenderExtension {
     private Object renderProperties;
 
     @Override
-    public Object getRenderPropertiesInternal() {
+    public Object citadel$getRenderPropertiesInternal() {
         return renderProperties;
     }
 }

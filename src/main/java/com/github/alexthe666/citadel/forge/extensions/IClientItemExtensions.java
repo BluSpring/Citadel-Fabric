@@ -30,7 +30,7 @@ public interface IClientItemExtensions {
 
     static IClientItemExtensions of(Item item)
     {
-        return ((ItemRenderExtension) item).getRenderPropertiesInternal() instanceof IClientItemExtensions e ? e : DEFAULT;
+        return ((ItemRenderExtension) item).citadel$getRenderPropertiesInternal() instanceof IClientItemExtensions e ? e : DEFAULT;
     }
 
     /**

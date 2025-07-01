@@ -3,6 +3,8 @@ package com.github.alexthe666.citadel.mixin.client;
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.util.Mth;
@@ -14,15 +16,14 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
 
-    @Redirect(
+    @ModifyExpressionValue(
             method = "renderLevel(Lcom/mojang/blaze3d/vertex/PoseStack;FJZLnet/minecraft/client/Camera;Lnet/minecraft/client/renderer/GameRenderer;Lnet/minecraft/client/renderer/LightTexture;Lcom/mojang/math/Matrix4f;)V",
             remap = CitadelConstants.REMAPREFS,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getTeamColor()I")
     )
-    private int citadel_getTeamColor(Entity entity) {
+    private int citadel_getTeamColor(int color, @Local Entity entity) {
         EventGetOutlineColor event = new EventGetOutlineColor(entity, entity.getTeamColor());
         var result = EventGetOutlineColor.EVENT.invoker().onGetOutlineColor(event);
-        int color = entity.getTeamColor();
         if (result.asMinecraft().consumesAction()) {
             color = event.getColor();
         }
