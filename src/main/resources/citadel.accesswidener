@@ -1,0 +1,38 @@
+accessWidener v2 named
+
+accessible class net/minecraft/client/renderer/block/model/BlockElement$Deserializer
+accessible method net/minecraft/client/renderer/block/model/BlockElement$Deserializer <init> ()V
+
+accessible class net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer
+accessible method net/minecraft/client/renderer/block/model/BlockElementFace$Deserializer <init> ()V
+
+accessible class net/minecraft/client/renderer/block/model/BlockFaceUV$Deserializer
+accessible method net/minecraft/client/renderer/block/model/BlockFaceUV$Deserializer <init> ()V
+
+accessible class net/minecraft/client/renderer/block/model/ItemTransform$Deserializer
+accessible method net/minecraft/client/renderer/block/model/ItemTransform$Deserializer <init> ()V
+
+accessible class net/minecraft/client/renderer/block/model/ItemOverride$Deserializer
+accessible method net/minecraft/client/renderer/block/model/ItemOverride$Deserializer <init> ()V
+
+accessible class net/minecraft/client/renderer/block/model/ItemTransforms$Deserializer
+accessible method net/minecraft/client/renderer/block/model/ItemTransforms$Deserializer <init> ()V
+
+accessible field net/minecraft/world/level/pathfinder/NodeEvaluator entityWidth I
+accessible field net/minecraft/world/level/pathfinder/NodeEvaluator entityDepth I
+accessible field net/minecraft/world/level/pathfinder/NodeEvaluator entityHeight I
+accessible field net/minecraft/client/gui/screens/ConfirmScreen callback Lit/unimi/dsi/fastutil/booleans/BooleanConsumer;
+accessible field net/minecraft/client/gui/screens/BackupConfirmScreen onProceed Lnet/minecraft/client/gui/screens/BackupConfirmScreen$Listener;
+accessible field net/minecraft/client/gui/screens/Screen renderables Ljava/util/List;
+accessible field net/minecraft/client/renderer/RenderStateShard setupState Ljava/lang/Runnable;
+mutable field net/minecraft/client/renderer/RenderStateShard setupState Ljava/lang/Runnable;
+accessible field net/minecraft/client/DeltaTracker$Timer msPerTick F
+mutable field net/minecraft/client/DeltaTracker$Timer msPerTick F
+
+accessible method net/minecraft/server/level/ChunkMap getVisibleChunkIfPresent (J)Lnet/minecraft/server/level/ChunkHolder;
+extendable method net/minecraft/server/level/ChunkMap getVisibleChunkIfPresent (J)Lnet/minecraft/server/level/ChunkHolder;
+
+accessible field net/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool templates Lit/unimi/dsi/fastutil/objects/ObjectArrayList;
+accessible field net/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool rawTemplates Ljava/util/List;
+mutable field net/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool templates Lit/unimi/dsi/fastutil/objects/ObjectArrayList;
+mutable field net/minecraft/world/level/levelgen/structure/pools/StructureTemplatePool rawTemplates Ljava/util/List;

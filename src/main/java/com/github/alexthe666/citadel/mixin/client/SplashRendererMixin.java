@@ -3,8 +3,6 @@ package com.github.alexthe666.citadel.mixin.client;
 import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.client.event.EventRenderSplashText;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.TriState;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -18,6 +16,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.SplashRenderer;
+
+import net.fabricmc.fabric.api.util.TriState;
 
 @Mixin(SplashRenderer.class)
 public class SplashRendererMixin {
@@ -40,7 +40,7 @@ public class SplashRendererMixin {
     protected void citadel_preRenderSplashText(GuiGraphics guiGraphics, int width, Font font, int loadProgress, CallbackInfo ci) {
         guiGraphics.pose().pushPose();
         EventRenderSplashText.Pre event = new EventRenderSplashText.Pre(splash, guiGraphics, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks(), 16776960);
-        NeoForge.EVENT_BUS.post(event);
+        event.sendEvent();
 
         if (event.getResult() == TriState.TRUE) {
             splash = event.getSplashText();
@@ -59,7 +59,7 @@ public class SplashRendererMixin {
     )
     protected void citadel_postRenderSplashText(GuiGraphics guiGraphics, int width, Font font, int loadProgress, CallbackInfo ci) {
         EventRenderSplashText.Post event = new EventRenderSplashText.Post(splash, guiGraphics, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks());
-        NeoForge.EVENT_BUS.post(event);
+        event.sendEvent();
         guiGraphics.pose().popPose();
     }
 

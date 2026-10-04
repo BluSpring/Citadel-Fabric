@@ -5,7 +5,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 public class AnimationMessage implements CustomPacketPayload {
 
@@ -34,7 +37,8 @@ public class AnimationMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    public static void handle(final AnimationMessage message, IPayloadContext context) {
-        context.enqueueWork(() -> Citadel.PROXY.handleAnimationPacket(message.entityID, message.index));
+    @Environment(EnvType.CLIENT)
+    public static void handle(final AnimationMessage message, ClientPlayNetworking.Context context) {
+        context.client().execute(() -> Citadel.PROXY.handleAnimationPacket(message.entityID, message.index));
     }
 }

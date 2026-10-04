@@ -10,7 +10,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.NeoForge;
 
 public class ServerProxy {
     public ServerProxy() {
@@ -41,10 +40,6 @@ public class ServerProxy {
     public void openBookGUI(ItemStack book) {
     }
 
-    public Object getISTERProperties() {
-        return null;
-    }
-
     public void onClientInit() {
     }
 
@@ -59,8 +54,7 @@ public class ServerProxy {
                 return false;
             } else if (!tracker.hasNormalTickRate(entity)) {
                 EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-                NeoForge.EVENT_BUS.post(event);
-                if (event.isCanceled()) {
+                if (event.post()) {
                     return true;
                 } else {
                     tracker.addTickBlockedEntity(entity);

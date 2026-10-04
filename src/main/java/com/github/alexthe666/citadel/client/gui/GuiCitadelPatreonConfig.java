@@ -3,6 +3,8 @@ package com.github.alexthe666.citadel.client.gui;
 import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
+import io.github.fabricators_of_create.porting_lib.util.client.ExtendedSlider;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,8 +14,8 @@ import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
-import net.neoforged.neoforge.network.PacketDistributor;
+
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 public class GuiCitadelPatreonConfig extends OptionsSubScreen {
 
@@ -55,7 +57,7 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
             //heightSlider.isHovered = false;
         }
         CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
-        PacketDistributor.sendToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
+        ClientPlayNetworking.send(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
     }
 
     public static float roundTo(float value, int places) {
@@ -109,7 +111,7 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
             tag.putString("CitadelFollowerType", followType);
             CitadelEntityData.setCitadelTag(Minecraft.getInstance().player, tag);
-            PacketDistributor.sendToServer(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
+            ClientPlayNetworking.send(new PropertiesMessage("CitadelPatreonConfig", tag, Minecraft.getInstance().player.getId()));
             changeButton.setMessage(getTypeText());
         }).size(200, 20).pos(i - 100, j).build();
         this.addRenderableWidget(changeButton);

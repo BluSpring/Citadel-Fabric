@@ -7,10 +7,13 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 /**
  * Message to sync some path over to the client.
@@ -90,9 +93,10 @@ public class SyncePathMessage implements CustomPacketPayload{
         return TYPE;
     }
 
-    public static void handle(final SyncePathMessage message, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            if (context.flow().isClientbound()) {
+    @Environment(EnvType.CLIENT)
+    public static void handle(final SyncePathMessage message, ClientPlayNetworking.Context context) {
+        context.client().execute(() -> {
+            {
                 PathfindingDebugRenderer.lastDebugNodesVisited = message.lastDebugNodesVisited;
                 PathfindingDebugRenderer.lastDebugNodesNotVisited = message.lastDebugNodesNotVisited;
                 PathfindingDebugRenderer.lastDebugNodesPath = message.lastDebugNodesPath;

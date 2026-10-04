@@ -1,10 +1,14 @@
 package com.github.alexthe666.citadel.client.event;
 
-import net.minecraft.client.gui.GuiGraphics;
-import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.common.util.TriState;
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 
-public class EventRenderSplashText extends Event {
+import net.minecraft.client.gui.GuiGraphics;
+
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.util.TriState;
+
+public abstract class EventRenderSplashText extends BaseEvent {
     private String splashText;
 
     private GuiGraphics guiGraphics;
@@ -33,6 +37,21 @@ public class EventRenderSplashText extends Event {
     }
 
     public static class Pre extends EventRenderSplashText {
+        public interface Callback {
+            void preRenderSplashText(Pre event);
+        }
+
+        public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+            for (Callback callback : callbacks) {
+                callback.preRenderSplashText(event);
+            }
+        });
+
+        @Override
+        public void sendEvent() {
+            EVENT.invoker().preRenderSplashText(this);
+        }
+
         private TriState result = TriState.DEFAULT;
 
         private int splashTextColor;
@@ -60,6 +79,20 @@ public class EventRenderSplashText extends Event {
     }
 
     public static class Post extends EventRenderSplashText {
+        public interface Callback {
+            void postRenderSplashText(Post event);
+        }
+
+        public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+            for (Callback callback : callbacks) {
+                callback.postRenderSplashText(event);
+            }
+        });
+
+        @Override
+        public void sendEvent() {
+            EVENT.invoker().postRenderSplashText(this);
+        }
 
         public Post(String splashText, GuiGraphics guiGraphics, float partialTicks) {
             super(splashText, guiGraphics, partialTicks);

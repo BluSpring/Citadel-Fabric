@@ -1,14 +1,34 @@
 package com.github.alexthe666.citadel.client.event;
 
+import com.github.alexthe666.citadel.animation.AnimationEvent;
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
+
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.level.material.FluidState;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.common.util.TriState;
 
-@OnlyIn(Dist.CLIENT)
-public class EventGetFluidRenderType extends Event {
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.util.TriState;
+
+@Environment(EnvType.CLIENT)
+public class EventGetFluidRenderType extends BaseEvent {
+    public interface Callback {
+        void onGetFluidRenderType(EventGetFluidRenderType event);
+    }
+
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+        for (Callback callback : callbacks) {
+            callback.onGetFluidRenderType(event);
+        }
+    });
+
+    @Override
+    public void sendEvent() {
+        EVENT.invoker().onGetFluidRenderType(this);
+    }
+
     private FluidState fluidState;
     private RenderType renderType;
     private TriState result = TriState.DEFAULT;

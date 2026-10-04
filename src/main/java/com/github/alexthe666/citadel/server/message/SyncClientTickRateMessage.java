@@ -6,7 +6,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 public class SyncClientTickRateMessage implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<SyncClientTickRateMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "tick_rate"));
@@ -30,9 +33,10 @@ public class SyncClientTickRateMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    public static void handle(final SyncClientTickRateMessage message, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            if (context.flow().isClientbound()) {
+    @Environment(EnvType.CLIENT)
+    public static void handle(final SyncClientTickRateMessage message, ClientPlayNetworking.Context context) {
+        context.client().execute(() -> {
+            {
                 Citadel.PROXY.handleClientTickRatePacket(message.compound);
             }
         });

@@ -7,7 +7,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public class DanceJukeboxMessage implements CustomPacketPayload {
 
@@ -42,12 +43,10 @@ public class DanceJukeboxMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    public static void handle(final DanceJukeboxMessage message, IPayloadContext context) {
-        context.enqueueWork(() -> {
+    public static void handle(final DanceJukeboxMessage message, ServerPlayNetworking.Context context) {
+        context.server().execute(() -> {
             Player player = context.player();
-            if (context.flow().isClientbound()) {
-                player = Citadel.PROXY.getClientSidePlayer();
-            }
+
             if (player != null) {
                 Citadel.PROXY.handleJukeboxPacket(player.level(), message.entityID, message.jukeBox, message.dance);
 

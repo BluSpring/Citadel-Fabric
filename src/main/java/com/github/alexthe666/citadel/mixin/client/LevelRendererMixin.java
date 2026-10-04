@@ -6,8 +6,6 @@ import com.github.alexthe666.citadel.client.event.EventGetOutlineColor;
 import com.github.alexthe666.citadel.client.shader.PostEffectRegistry;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.TriState;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,6 +24,8 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+
+import net.fabricmc.fabric.api.util.TriState;
 
 @Mixin(LevelRenderer.class)
 public class LevelRendererMixin {
@@ -83,7 +83,7 @@ public class LevelRendererMixin {
     private int citadel_getTeamColor(Entity entity, Operation<Integer> original) {
         int originalValue = original.call(entity);
         EventGetOutlineColor event = new EventGetOutlineColor(entity, originalValue);
-        NeoForge.EVENT_BUS.post(event);
+        event.sendEvent();
         int color = originalValue;
         if (event.getResult() == TriState.TRUE) {
             color = event.getColor();

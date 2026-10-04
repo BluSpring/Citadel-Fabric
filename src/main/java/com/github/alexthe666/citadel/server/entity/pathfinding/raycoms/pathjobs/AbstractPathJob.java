@@ -4,6 +4,7 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs
  */
 
 import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.fabric.CitadelFabricHooks;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.*;
 import com.github.alexthe666.citadel.server.message.SyncePathMessage;
 import com.github.alexthe666.citadel.server.message.SyncPathReachedMessage;
@@ -29,9 +30,8 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -39,6 +39,8 @@ import java.util.concurrent.Callable;
 import static com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.PathfindingConstants.*;
 import static com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.SurfaceType.getSurfaceType;
 import static com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.SurfaceType.isWater;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
@@ -292,7 +294,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
         for (final Map.Entry<Player, UUID> entry : trackingMap.entrySet()) {
             if (entry.getValue().equals(mob.getUUID())) {
-                PacketDistributor.sendToPlayer((ServerPlayer) entry.getKey(), new SyncPathReachedMessage(reached));
+                ServerPlayNetworking.send((ServerPlayer) entry.getKey(), new SyncPathReachedMessage(reached));
             }
         }
     }
@@ -330,7 +332,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
         }
 
         BlockState down = world.getBlockState(pos.below());
-        while (!bs.blocksMotion() && !down.blocksMotion() && !down.getBlock().isLadder(down, world, pos.below(), entity) && bs.getFluidState().isEmpty()) {
+        while (!bs.blocksMotion() && !down.blocksMotion() && !CitadelFabricHooks.isLadder(down, world, pos.below(), entity) && bs.getFluidState().isEmpty()) {
             pos.move(Direction.DOWN, 1);
             bs = down;
             down = world.getBlockState(pos.below());
@@ -446,7 +448,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
             if (entry.getKey().isRemoved()) {
                 iter.remove();
             } else if (entry.getValue().equals(mob.getUUID())) {
-                PacketDistributor.sendToPlayer( (ServerPlayer) entry.getKey(), new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath));
+                ServerPlayNetworking.send( (ServerPlayer) entry.getKey(), new SyncePathMessage(debugNodesVisited, debugNodesNotVisited, debugNodesPath));
             }
         }
     }
@@ -1319,7 +1321,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
 
                 // TODO: I'd be cool if dragons could squash multiple snow layers when walking over them
                 if (shape.isEmpty() || shape.max(Direction.Axis.Y) <= 0.125 && !isLiquid((block)) && (block.getBlock() != Blocks.SNOW || block.getValue(SnowLayerBlock.LAYERS) == 1)) {
-                    final PathType pathType = block.getBlockPathType(world, pos, null);
+                    final PathType pathType = CitadelFabricHooks.getBlockPathType(block, world, pos, null);
                     return pathType == null;
                 }
                 return false;
@@ -1461,7 +1463,7 @@ public abstract class AbstractPathJob implements Callable<Path> {
      * @return true if the block is a ladder.
      */
     protected boolean isLadder(final Block block, final BlockPos pos) {
-        return block.isLadder(this.world.getBlockState(pos), world, pos, entity.get());
+        return CitadelFabricHooks.isLadder(this.world.getBlockState(pos), world, pos, entity.get());
     }
 
     protected boolean isLadder(final BlockPos pos) {

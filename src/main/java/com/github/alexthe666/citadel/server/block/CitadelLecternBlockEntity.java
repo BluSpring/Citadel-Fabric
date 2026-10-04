@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 public class CitadelLecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
     private ItemStack book = ItemStack.EMPTY;
@@ -102,7 +102,7 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
     };
 
     public CitadelLecternBlockEntity(BlockPos pos, BlockState state) {
-        super(Citadel.LECTERN_BE.get(), pos, state);
+        super(Citadel.LECTERN_BE, pos, state);
     }
 
     public ItemStack getBook() {

@@ -5,7 +5,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.loading.FMLPaths;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -13,6 +12,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import net.fabricmc.loader.api.FabricLoader;
 
 public class SpawnBiomeConfig {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(SpawnBiomeData.class, new SpawnBiomeData.Deserializer()).create();
@@ -51,7 +52,7 @@ public class SpawnBiomeConfig {
     }
 
     private File getConfigDirFile() {
-        Path configPath = FMLPaths.CONFIGDIR.get();
+        Path configPath = FabricLoader.getInstance().getConfigDir();
         Path jsonPath = Paths.get(configPath.toAbsolutePath().toString(), fileName.getNamespace());
         return jsonPath.toFile();
     }

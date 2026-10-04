@@ -8,8 +8,6 @@ import com.github.alexthe666.citadel.client.tick.ClientTickRateTracker;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.TriState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -23,6 +21,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
 
+import net.fabricmc.fabric.api.util.TriState;
+
 @Mixin(ClientLevel.class)
 public abstract class ClientLevelMixin extends Level {
 
@@ -33,7 +33,7 @@ public abstract class ClientLevelMixin extends Level {
     @ModifyReturnValue(at = @At("RETURN"), remap = CitadelConstants.REMAPREFS, method = "getStarBrightness")
     private float citadel_getStarBrightness(float original, @Local(argsOnly = true) float partialTicks) {
         EventGetStarBrightness event = new EventGetStarBrightness(((ClientLevel) (Object) this), original, partialTicks);
-        NeoForge.EVENT_BUS.post(event);
+        event.sendEvent();
         if (event.getResult() == TriState.TRUE) {
             return event.getBrightness();
         }

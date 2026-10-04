@@ -7,11 +7,16 @@ import com.github.alexthe666.citadel.server.world.CitadelServerData;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.PacketDistributor;
+
+import io.github.fabricators_of_create.porting_lib.core.util.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public class ServerTickRateTracker extends TickRateTracker {
     public static final int MS_PER_TICK = 50;
@@ -41,7 +46,10 @@ public class ServerTickRateTracker extends TickRateTracker {
 
     @Override
     protected void sync() {
-        PacketDistributor.sendToAllPlayers(new SyncClientTickRateMessage(toTag()));
+        var packet = new SyncClientTickRateMessage(toTag());
+        for (ServerPlayer p : PlayerLookup.all(ServerLifecycleHooks.getCurrentServer())) {
+            ServerPlayNetworking.send(p, packet);
+        }
     }
 
     public int getServerTickLengthMs() {

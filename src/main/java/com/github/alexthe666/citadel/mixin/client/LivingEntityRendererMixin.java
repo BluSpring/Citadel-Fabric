@@ -3,7 +3,6 @@ package com.github.alexthe666.citadel.mixin.client;
 import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.client.event.EventLivingRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.neoforged.neoforge.common.NeoForge;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,7 +27,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     protected void citadel_setupRotations(T entity, PoseStack poseStack, float bob, float yBodyRot, float partialTick, float scale, CallbackInfo ci) {
         EventLivingRenderer.SetupRotations event = new EventLivingRenderer.SetupRotations(entity, model, poseStack, yBodyRot, partialTick);
-        NeoForge.EVENT_BUS.post(event);
+        event.sendEvent();
 
     }
 
@@ -43,7 +42,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     protected void citadel_render_setupAnim_before(LivingEntity livingEntity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
         EventLivingRenderer.PreSetupAnimations event = new EventLivingRenderer.PreSetupAnimations(livingEntity, model, poseStack, yaw, partialTicks, bufferSource, packedLight);
-        NeoForge.EVENT_BUS.post(event);
+        event.sendEvent();
     }
 
     @Inject(
@@ -58,7 +57,7 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     protected void citadel_render_setupAnim_after(LivingEntity livingEntity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
         EventLivingRenderer.PostSetupAnimations event = new EventLivingRenderer.PostSetupAnimations(livingEntity, model, poseStack, yaw, partialTicks, bufferSource, packedLight);
-        NeoForge.EVENT_BUS.post(event);
+        event.sendEvent();
     }
 
     @Inject(
@@ -68,6 +67,6 @@ public class LivingEntityRendererMixin<T extends LivingEntity> {
     )
     protected void citadel_render_renderToBuffer(LivingEntity livingEntity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo ci) {
         EventLivingRenderer.PostRenderModel event = new EventLivingRenderer.PostRenderModel(livingEntity, model, poseStack, yaw, partialTicks, bufferSource, packedLight);
-        NeoForge.EVENT_BUS.post(event);
+        event.sendEvent();
     }
 }

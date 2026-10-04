@@ -7,13 +7,31 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.common.util.TriState;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventMergeStructureSpawns extends Event {
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
+
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.util.TriState;
+
+public class EventMergeStructureSpawns extends BaseEvent {
+    public interface Callback {
+        void onMergeStructureSpawns(EventMergeStructureSpawns event);
+    }
+
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+        for (Callback callback : callbacks) {
+            callback.onMergeStructureSpawns(event);
+        }
+    });
+
+    @Override
+    public void sendEvent() {
+        EVENT.invoker().onMergeStructureSpawns(this);
+    }
 
     private StructureManager structureManager;
     private BlockPos pos;

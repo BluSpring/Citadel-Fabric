@@ -1,10 +1,29 @@
 package com.github.alexthe666.citadel.client.event;
 
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.common.util.TriState;
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 
-public class EventGetStarBrightness extends Event {
+import net.minecraft.client.multiplayer.ClientLevel;
+
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.util.TriState;
+
+public class EventGetStarBrightness extends BaseEvent {
+    public interface Callback {
+        void onGetStarBrightness(EventGetStarBrightness event);
+    }
+
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+        for (Callback callback : callbacks) {
+            callback.onGetStarBrightness(event);
+        }
+    });
+
+    @Override
+    public void sendEvent() {
+        EVENT.invoker().onGetStarBrightness(this);
+    }
+
     private ClientLevel clientLevel;
     private float brightness;
     private float partialTicks;

@@ -1,6 +1,6 @@
 package com.github.alexthe666.citadel.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import io.github.fabricators_of_create.porting_lib.config.ModConfigSpec;
 
 public class ServerConfig {
 

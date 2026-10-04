@@ -2,7 +2,6 @@ package com.github.alexthe666.citadel.client.video;
 
 import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.loading.FMLPaths;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +28,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import net.fabricmc.loader.api.FabricLoader;
 
 public class Video {
 
@@ -197,7 +198,7 @@ public class Video {
     }
 
     private static Path getVideoCacheFolder() {
-        Path configPath = FMLPaths.GAMEDIR.get();
+        Path configPath = FabricLoader.getInstance().getGameDir();
         Path jsonPath = Paths.get(configPath.toAbsolutePath().toString(), "citadel/video_cache");
         if (!Files.exists(jsonPath)) {
             try {

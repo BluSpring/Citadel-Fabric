@@ -7,7 +7,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 
 public class WorldEventContext {
     public static final WorldEventContext INSTANCE = new WorldEventContext();
@@ -30,11 +31,11 @@ public class WorldEventContext {
      */
     int clientRenderDist;
 
-    public void renderWorldLastEvent(final RenderLevelStageEvent event)
+    public void renderWorldLastEvent(final WorldRenderContext event, int stage)
     {
         bufferSource = WorldRenderMacros.getBufferSource();
-        poseStack = event.getPoseStack();
-        partialTicks = event.getPartialTick().getGameTimeDeltaTicks();
+        poseStack = event.matrixStack();
+        partialTicks = event.tickCounter().getGameTimeDeltaTicks();
         clientLevel = Minecraft.getInstance().level;
         clientPlayer = Minecraft.getInstance().player;
         mainHandItem = clientPlayer.getMainHandItem();
@@ -44,13 +45,13 @@ public class WorldEventContext {
         poseStack.pushPose();
         poseStack.translate(-cameraPos.x(), -cameraPos.y(), -cameraPos.z());
 
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS)
+        if (stage == 0)
         {
             PathfindingDebugRenderer.render(this);
 
             bufferSource.endBatch();
         }
-        else if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS)
+        else if (stage == 1)
         {
             bufferSource.endBatch();
         }

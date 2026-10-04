@@ -47,7 +47,7 @@ import org.apache.commons.io.IOUtils;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

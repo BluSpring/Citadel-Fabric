@@ -1,10 +1,15 @@
 package com.github.alexthe666.citadel.animation;
 
 import com.github.alexthe666.citadel.server.message.AnimationMessage;
+
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.network.PacketDistributor;
+
+import io.github.fabricators_of_create.porting_lib.core.util.ServerLifecycleHooks;
 import org.apache.commons.lang3.ArrayUtils;
+
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 /**
  * @author iLexiconn
@@ -25,7 +30,11 @@ public enum AnimationHandler {
             return;
         }
         entity.setAnimation(animation);
-        PacketDistributor.sendToAllPlayers(new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation)));
+
+        var packet = new AnimationMessage(entity.getId(), ArrayUtils.indexOf(entity.getAnimations(), animation));
+        for (ServerPlayer p : PlayerLookup.all(ServerLifecycleHooks.getCurrentServer())) {
+            ServerPlayNetworking.send(p, packet);
+        }
     }
 
     /**
@@ -41,13 +50,13 @@ public enum AnimationHandler {
             if (entity.getAnimation() != IAnimatedEntity.NO_ANIMATION) {
                 if (entity.getAnimationTick() == 0) {
                     AnimationEvent.Start event = new AnimationEvent.Start<>(entity, entity.getAnimation());
-                    if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
+                    if (!event.post()) {
                         this.sendAnimationMessage(entity, event.getAnimation());
                     }
                 }
                 if (entity.getAnimationTick() < entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(entity.getAnimationTick() + 1);
-                    NeoForge.EVENT_BUS.post(new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick()));
+                    (new AnimationEvent.Tick<>(entity, entity.getAnimation(), entity.getAnimationTick())).sendEvent();
                 }
                 if (entity.getAnimationTick() == entity.getAnimation().getDuration()) {
                     entity.setAnimationTick(0);

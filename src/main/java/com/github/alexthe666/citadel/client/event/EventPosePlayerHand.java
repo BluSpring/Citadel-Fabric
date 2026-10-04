@@ -1,12 +1,31 @@
 package com.github.alexthe666.citadel.client.event;
 
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
+
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.common.util.TriState;
 
-public class EventPosePlayerHand extends Event {
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.util.TriState;
+
+public class EventPosePlayerHand extends BaseEvent {
+    public interface Callback {
+        void onPosePlayerHand(EventPosePlayerHand event);
+    }
+
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+        for (Callback callback : callbacks) {
+            callback.onPosePlayerHand(event);
+        }
+    });
+
+    @Override
+    public void sendEvent() {
+        EVENT.invoker().onPosePlayerHand(this);
+    }
+
     private LivingEntity entityIn;
     private HumanoidModel model;
     private boolean left;

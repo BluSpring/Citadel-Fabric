@@ -7,7 +7,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CitadelServerData extends SavedData {
 
@@ -27,7 +27,7 @@ public class CitadelServerData extends SavedData {
         return new SavedData.Factory<>(() -> new CitadelServerData(level), (tag, provider) -> load(level, tag), null);
     }
 
-    @Nonnull
+    @NotNull
     public static CitadelServerData get(MinecraftServer server) {
         DimensionDataStorage storage = server.getLevel(Level.OVERWORLD).getDataStorage();
         CitadelServerData data = storage.computeIfAbsent(factory(server), IDENTIFIER);

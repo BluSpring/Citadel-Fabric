@@ -4,6 +4,7 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms;
  */
 
 import com.github.alexthe666.citadel.Citadel;
+import com.github.alexthe666.citadel.fabric.CitadelFabricHooks;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.AbstractPathJob;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.PathJobMoveAwayFromLocation;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.PathJobMoveToLocation;
@@ -27,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -618,7 +619,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
 
 
             final BlockPos pos = new BlockPos(pEx.x, pEx.y, pEx.z);
-            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y) && level.getBlockState(pos).isLadder(level, pos, ourEntity)) {
+            if (pEx.isOnLadder() && pExNext != null && (pEx.y != pExNext.y || mob.getY() > pEx.y) && CitadelFabricHooks.isLadder(level.getBlockState(pos), level, pos, ourEntity)) {
                 return handlePathPointOnLadder(pEx);
             } else if (ourEntity.isInWater()) {
                 return handleEntityInWater(oldIndex, pEx);
@@ -727,7 +728,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
             }
             else
             {
-                if (level.getBlockState(entityPos.below()).isLadder(level, entityPos.below(), ourEntity)) {
+                if (CitadelFabricHooks.isLadder(level.getBlockState(entityPos.below()), level, entityPos.below(), ourEntity)) {
                     this.ourEntity.setYya(-0.5f);
                 } else {
                     return false;

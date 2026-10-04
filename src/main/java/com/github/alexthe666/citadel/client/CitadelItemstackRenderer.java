@@ -27,22 +27,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
+public class CitadelItemstackRenderer {
+    public static final CitadelItemstackRenderer INSTANCE = new CitadelItemstackRenderer();
 
     private static final ResourceLocation DEFAULT_ICON_TEXTURE = ResourceLocation.parse("citadel:textures/gui/book/icon_default.png");
 
     private static List<Holder.Reference<MobEffect>> mobEffectList = null;
 
-    public CitadelItemstackRenderer() {
-        super(null, null);
-    }
-
-    @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         float partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaTicks();
         float ticksExisted = Util.getMillis() / 50F + partialTicks;
         int id = Minecraft.getInstance().player == null ? 0 : Minecraft.getInstance().player.getId();
-        if (stack.getItem() == Citadel.FANCY_ITEM.get()) {
+        if (stack.getItem() == Citadel.FANCY_ITEM) {
             Random random = new Random();
             boolean animateAnyways = false;
 
@@ -74,7 +70,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             Minecraft.getInstance().getItemRenderer().renderStatic(display.item(), displayContext, packedLight, packedOverlay, poseStack, buffer, null, id);
             poseStack.popPose();
         }
-        if (stack.getItem() == Citadel.EFFECT_ITEM.get()) {
+        if (stack.getItem() == Citadel.EFFECT_ITEM) {
             RenderSystem.enableBlend();
             RenderSystem.defaultBlendFunc();
             RenderSystem.disableCull();
@@ -92,7 +88,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
                 int time = (int) (Util.getMillis() / 500);
                 effect = mobEffectList.get(time % size);
                 if (effect == null) {
-                    effect = MobEffects.MOVEMENT_SPEED.getDelegate();
+                    effect = MobEffects.MOVEMENT_SPEED;
                 }
             }
 
@@ -113,7 +109,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
             poseStack.popPose();
         }
-        if (stack.getItem() == Citadel.ICON_ITEM.get()) {
+        if (stack.getItem() == Citadel.ICON_ITEM) {
             ResourceLocation texture = stack.getOrDefault(Citadel.ICON_LOCATION, DEFAULT_ICON_TEXTURE);
             poseStack.pushPose();
             poseStack.translate(0, 0, 0.5F);

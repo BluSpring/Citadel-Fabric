@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "citadel",
+  "version": "${version}",
+  "name": "Citadel (Fabric)",
+  "description": "A shared code library for many of Alexthe666's mods. Code used from LLibrary with permission.\nUnofficial Fabric 1.21.1 port by BluSpring, and somehow one of the very few that doesn't use AI.",
+  "authors": [
+    "Alexthe666",
+    "Gegy1000",
+    "BluSpring"
+  ],
+  "contact": {
+    "sources": "https://github.com/BluSpring/Citadel-Fabric"
+  },
+  "license": "LGPL",
+  "icon": "citadel.png",
+  "environment": "*",
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": ">=${fabric_version}",
+    "minecraft": "${minecraft_version}"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
+  },
+  "accessWidener": "citadel.accesswidener",
+  "entrypoints": {
+    "main": [
+      "com.github.alexthe666.citadel.Citadel"
+    ],
+    "client": [
+      "com.github.alexthe666.citadel.client.CitadelClient"
+    ]
+  },
+  "mixins": [
+    "citadel.mixins.json"
+  ]
+}

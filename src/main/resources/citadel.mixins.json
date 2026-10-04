@@ -12,7 +12,8 @@
     "MinecraftServerMixin",
     "NoiseBasedChunkGeneratorMixin",
     "ServerLevelMixin",
-    "SmithingMenuMixin"
+    "SmithingMenuMixin",
+    "fabric.SpawnSettingsContextImplAccessor"
   ],
   "client": [
     "client.AbstractClientPlayerMixin",
@@ -22,7 +23,8 @@
     "client.LevelRendererMixin",
     "client.LivingEntityRendererMixin",
     "client.SoundEngineMixin",
-    "client.SplashRendererMixin"
+    "client.SplashRendererMixin",
+    "fabric.AbstractButtonMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,10 +1,29 @@
 package com.github.alexthe666.citadel.client.event;
 
-import net.minecraft.world.entity.Entity;
-import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.common.util.TriState;
+import io.github.fabricators_of_create.porting_lib.core.event.BaseEvent;
 
-public class EventGetOutlineColor extends Event {
+import net.minecraft.world.entity.Entity;
+
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
+import net.fabricmc.fabric.api.util.TriState;
+
+public class EventGetOutlineColor extends BaseEvent {
+    public interface Callback {
+        void onGetOutlineColor(EventGetOutlineColor event);
+    }
+
+    public static final Event<Callback> EVENT = EventFactory.createArrayBacked(Callback.class, callbacks -> event -> {
+        for (Callback callback : callbacks) {
+            callback.onGetOutlineColor(event);
+        }
+    });
+
+    @Override
+    public void sendEvent() {
+        EVENT.invoker().onGetOutlineColor(this);
+    }
+
     private Entity entityIn;
     private int color;
     private TriState result = TriState.DEFAULT;

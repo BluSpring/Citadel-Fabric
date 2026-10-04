@@ -9,7 +9,11 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public class PropertiesMessage implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<PropertiesMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "properties"));
@@ -39,11 +43,18 @@ public class PropertiesMessage implements CustomPacketPayload {
         return TYPE;
     }
 
-    public static void handle(final PropertiesMessage message, IPayloadContext context) {
-        context.enqueueWork(() -> {
-            if (context.flow().isClientbound()) {
+    @Environment(EnvType.CLIENT)
+    public static void handle(final PropertiesMessage message, ClientPlayNetworking.Context context) {
+        context.client().execute(() -> {
+            {
                 Citadel.PROXY.handlePropertiesPacket(message.propertyID, message.compound, message.entityID);
-            } else {
+            }
+        });
+    }
+
+    public static void handle(final PropertiesMessage message, ServerPlayNetworking.Context context) {
+        context.server().execute(() -> {
+            {
                 Entity e = context.player().level().getEntity(message.entityID);
                 if (e instanceof LivingEntity && (message.propertyID.equals("CitadelPatreonConfig") || message.propertyID.equals("CitadelTagUpdate"))) {
                     CitadelEntityData.setCitadelTag((LivingEntity) e, message.compound);

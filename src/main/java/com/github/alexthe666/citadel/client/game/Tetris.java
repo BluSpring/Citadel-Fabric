@@ -20,7 +20,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -203,9 +202,9 @@ public class Tetris {
         BlockState randomState = Blocks.DIRT.defaultBlockState();
         for (int tries = 0; tries < 5; tries++) {
             try{
-                BlockState block = BuiltInRegistries.BLOCK.getAny().get().getDelegate().value().defaultBlockState();
+                BlockState block = BuiltInRegistries.BLOCK.getAny().get().value().defaultBlockState();
                 BakedModel blockModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(block);
-                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer() && blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())) {
+                if (!block.is(Blocks.GLOWSTONE) && !blockModel.isCustomRenderer()/* && blockModel.getRenderTypes(block, random, ModelData.EMPTY).contains(RenderType.solid())*/) {
                     randomState = block;
                     break;
                 }
@@ -254,7 +253,7 @@ public class Tetris {
     }
 
     private void renderBlockState(BlockState state, float offsetX, float offsetY, float size) {
-        TextureAtlasSprite sprite = Minecraft.getInstance().getBlockRenderer().getBlockModel(state).getParticleIcon(ModelData.EMPTY);
+        TextureAtlasSprite sprite = Minecraft.getInstance().getBlockRenderer().getBlockModel(state).getParticleIcon();
         BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
         float f = size * 0.5F;
         bufferbuilder.addVertex(-f + offsetX, f + offsetY, 80.0F).setUv(sprite.getU0(), sprite.getV1());

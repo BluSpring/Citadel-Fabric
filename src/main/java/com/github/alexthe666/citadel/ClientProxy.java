@@ -1,7 +1,6 @@
 package com.github.alexthe666.citadel;
 
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
-import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
 import com.github.alexthe666.citadel.client.event.EventRenderSplashText;
 import com.github.alexthe666.citadel.client.game.Tetris;
 import com.github.alexthe666.citadel.client.gui.GuiCitadelBook;
@@ -26,12 +25,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.BackupConfirmScreen;
 import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.options.SkinCustomizationScreen;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -42,17 +45,22 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.TriState;
+
+import io.github.fabricators_of_create.porting_lib.event.client.PreRenderTooltipCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderPlayerEvents;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
+import net.fabricmc.fabric.api.util.TriState;
 
 public class ClientProxy extends ServerProxy {
     public static TabulaModel CITADEL_MODEL;
@@ -74,55 +82,88 @@ public class ClientProxy extends ServerProxy {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        BlockEntityRenderers.register(Citadel.LECTERN_BE.get(), CitadelLecternRenderer::new);
+        BlockEntityRenderers.register(Citadel.LECTERN_BE, CitadelLecternRenderer::new);
         CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station"), new int[]{}));
         CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
         CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
         if (CitadelConstants.debugShaders()) {
             PostEffectRegistry.registerEffect(RAINBOW_AURA_POST_SHADER);
         }
+
+        ScreenEvents.AFTER_INIT.register(this::screenOpen);
+
+        RenderPlayerEvents.PRE.register(this::playerRender);
+        WorldRenderEvents.LAST.register(context -> {
+            if (Pathfinding.isDebug()) {
+                WorldEventContext.INSTANCE.renderWorldLastEvent(context, -1);
+            }
+        });
+
+        WorldRenderEvents.AFTER_TRANSLUCENT.register(context -> {
+            if (Pathfinding.isDebug()) {
+                WorldEventContext.INSTANCE.renderWorldLastEvent(context, 1);
+            }
+        });
+
+        WorldRenderEvents.BEFORE_DEBUG_RENDER.register(context -> {
+            if (Pathfinding.isDebug()) {
+                WorldEventContext.INSTANCE.renderWorldLastEvent(context, 0);
+            }
+        });
+
+        ScreenEvents.BEFORE_INIT.register((client, screen, scaledWidth, scaledHeight) -> onOpenGui(screen));
+
+        EventRenderSplashText.Pre.EVENT.register(this::renderSplashTextBefore);
+        ClientTickEvents.START_CLIENT_TICK.register(client -> clientTick());
+        PreRenderTooltipCallback.EVENT.register((stack, poseStack, x, y, screenWidth, screenHeight, font, components) -> {
+            renderTooltipColor(stack);
+            return false;
+        });
     }
 
 
-    @SubscribeEvent
-    public void screenOpen(ScreenEvent.Init.Post event) {
-        if (event.getScreen() instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
+    public void screenOpen(Minecraft client, Screen screen, int screenWidth, int screenHeight) {
+        if (screen instanceof SkinCustomizationScreen && Minecraft.getInstance().player != null) {
             try {
+                var buttons = Screens.getButtons(screen);
+
                 String username = Minecraft.getInstance().player.getName().getString();
                 int height = -20;
                 if (Citadel.PATREONS.contains(username)) {
-                    Button button1 = Button.builder(Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(event.getScreen(), Minecraft.getInstance().options))).size(200, 20).pos(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height).build();
-                    event.addListener(button1);
+                    Button button1 = Button.builder(Component.translatable("citadel.gui.patreon_rewards_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> Minecraft.getInstance().setScreen(new GuiCitadelPatreonConfig(screen, Minecraft.getInstance().options))).size(200, 20).pos(screenWidth / 2 - 100, screenHeight / 6 + 150 + height).build();
+                    buttons.add(button1);
                     height += 25;
                 }
                 if (!CitadelCapes.getCapesFor(Minecraft.getInstance().player.getUUID()).isEmpty()) {
-                    Button button2 = Button.builder(Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(event.getScreen(), Minecraft.getInstance().options))).size(200, 20).pos(event.getScreen().width / 2 - 100, event.getScreen().height / 6 + 150 + height).build();
-                    event.addListener(button2);
+                    Button button2 = Button.builder(Component.translatable("citadel.gui.capes_option").withStyle(ChatFormatting.GREEN), (p_213080_2_) -> Minecraft.getInstance().setScreen(new GuiCitadelCapesConfig(screen, Minecraft.getInstance().options))).size(200, 20).pos(screenWidth / 2 - 100, screenHeight / 6 + 150 + height).build();
+                    buttons.add(button2);
                     height += 25;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        if (screen instanceof TitleScreen) {
+            ScreenEvents.afterRender(screen).register(this::screenRender);
+            ScreenKeyboardEvents.allowKeyPress(screen).register((screen1, key, scancode, modifiers) -> onKeyPressed(screen1, key));
+        }
     }
 
-    @SubscribeEvent
-    public void screenRender(ScreenEvent.Render.Post event) {
-        if (event.getScreen() instanceof TitleScreen && CitadelConstants.isAprilFools()) {
+    public void screenRender(Screen screen, GuiGraphics graphics, int mouseX, int mouseY, float tickDelta) {
+        if (screen instanceof TitleScreen titleScreen && CitadelConstants.isAprilFools()) {
             if (aprilFoolsTetrisGame == null) {
                 aprilFoolsTetrisGame = new Tetris();
             } else {
-                aprilFoolsTetrisGame.render((TitleScreen) event.getScreen(), event.getGuiGraphics(), event.getPartialTick());
+                aprilFoolsTetrisGame.render(titleScreen, graphics, tickDelta);
             }
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void playerRender(RenderPlayerEvent.Pre event) {
-        PoseStack matrixStackIn = event.getPoseStack();
-        String username = event.getEntity().getName().getString();
-        if (!event.getEntity().isModelPartShown(PlayerModelPart.CAPE) || event.isCanceled() || event.getEntity().isSpectator()) {
-            return;
+    public boolean playerRender(Player player, PlayerRenderer playerRenderer, float partialTick, PoseStack matrixStackIn, MultiBufferSource buffer, int packedLight) {
+        String username = player.getName().getString();
+        if (!player.isModelPartShown(PlayerModelPart.CAPE) || player.isSpectator()) {
+            return false;
         }
         if (Citadel.PATREONS.contains(username)) {
             CompoundTag tag = CitadelEntityData.getOrCreateCitadelTag(Minecraft.getInstance().player);
@@ -133,31 +174,25 @@ public class ClientProxy extends ServerProxy {
                     float distance = tag.contains("CitadelRotateDistance") ? tag.getFloat("CitadelRotateDistance") : 2F;
                     float speed = tag.contains("CitadelRotateSpeed") ? tag.getFloat("CitadelRotateSpeed") : 1F;
                     float height = tag.contains("CitadelRotateHeight") ? tag.getFloat("CitadelRotateHeight") : 1F;
-                    renderer.render(matrixStackIn, event.getMultiBufferSource(), event.getPackedLight(), event.getPartialTick(), event.getEntity(), distance, speed, height);
+                    renderer.render(matrixStackIn, buffer, packedLight, partialTick, player, distance, speed, height);
                 }
             }
         }
+
+        return false;
     }
 
-    @SubscribeEvent
-    public void renderWorldLastEvent(RenderLevelStageEvent event) {
-        if (Pathfinding.isDebug()) {
-            WorldEventContext.INSTANCE.renderWorldLastEvent(event);
-        }
-    }
-
-    @SubscribeEvent
-    public void onOpenGui(ScreenEvent.Opening event) {
+    public void onOpenGui(Screen screen) {
         if (ServerConfig.skipWarnings) {
             try {
-                if (event.getScreen() instanceof BackupConfirmScreen confirmBackupScreen) {
+                if (screen instanceof BackupConfirmScreen confirmBackupScreen) {
                     MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
 
                     if (confirmBackupScreen.getTitle().equals(title)) {
                         confirmBackupScreen.onProceed.proceed(false, true);
                     }
                 }
-                if (event.getScreen() instanceof ConfirmScreen confirmScreen) {
+                if (screen instanceof ConfirmScreen confirmScreen) {
                     MutableComponent title = Component.translatable("selectWorld.backupQuestion.experimental");
                     if (confirmScreen.getTitle().equals(title)) {
                         confirmScreen.callback.accept(true);
@@ -170,7 +205,6 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
-    @SubscribeEvent
     public void renderSplashTextBefore(EventRenderSplashText.Pre event) {
         if (CitadelConstants.isAprilFools() && aprilFoolsTetrisGame != null) {
             event.setResult(TriState.TRUE);
@@ -186,17 +220,17 @@ public class ClientProxy extends ServerProxy {
         }
     }
 
-    @SubscribeEvent
-    public void onKeyPressed(ScreenEvent.KeyPressed.Pre event) {
-        if (Minecraft.getInstance().screen instanceof TitleScreen && aprilFoolsTetrisGame != null && aprilFoolsTetrisGame.isStarted()) {
-            if (event.getKeyCode() == InputConstants.KEY_LEFT || event.getKeyCode() == InputConstants.KEY_RIGHT || event.getKeyCode() == InputConstants.KEY_DOWN || event.getKeyCode() == InputConstants.KEY_UP) {
-                event.setCanceled(true);
+    public boolean onKeyPressed(Screen screen, int keyCode) {
+        if (screen instanceof TitleScreen && aprilFoolsTetrisGame != null && aprilFoolsTetrisGame.isStarted()) {
+            if (keyCode == InputConstants.KEY_LEFT || keyCode == InputConstants.KEY_RIGHT || keyCode == InputConstants.KEY_DOWN || keyCode == InputConstants.KEY_UP) {
+                return false;
             }
         }
+
+        return true;
     }
 
-    @SubscribeEvent
-    public void clientTick(ClientTickEvent.Pre event) {
+    public void clientTick() {
         if (!isGamePaused() && Minecraft.getInstance().isRunning() && Minecraft.getInstance().level != null && Minecraft.getInstance().player != null) {
             ClientTickRateTracker.getForClient(Minecraft.getInstance()).masterTick();
             tickMouseOverAnimations();
@@ -242,10 +276,9 @@ public class ClientProxy extends ServerProxy {
         lastHoveredItem = null;
     }
 
-    @SubscribeEvent
-    public void renderTooltipColor(RenderTooltipEvent.Color event) {
-        if (event.getItemStack().getItem() instanceof ItemWithHoverAnimation hoverOver && hoverOver.canHoverOver(event.getItemStack())) {
-            lastHoveredItem = event.getItemStack();
+    public void renderTooltipColor(ItemStack stack) {
+        if (stack.getItem() instanceof ItemWithHoverAnimation hoverOver && hoverOver.canHoverOver(stack)) {
+            lastHoveredItem = stack;
         } else {
             lastHoveredItem = null;
         }
@@ -296,11 +329,6 @@ public class ClientProxy extends ServerProxy {
     }
 
     @Override
-    public Object getISTERProperties() {
-        return new CitadelItemRenderProperties();
-    }
-
-    @Override
     public void openBookGUI(ItemStack book) {
         Minecraft.getInstance().setScreen(new GuiCitadelBook(book));
     }
@@ -319,8 +347,7 @@ public class ClientProxy extends ServerProxy {
             return false;
         } else if (!tracker.hasNormalTickRate(entity)) {
             EventChangeEntityTickRate event = new EventChangeEntityTickRate(entity, tracker.getEntityTickLengthModifier(entity));
-            NeoForge.EVENT_BUS.post(event);
-            if (event.isCanceled()) {
+            if (event.post()) {
                 return true;
             } else {
                 tracker.addTickBlockedEntity(entity);
@@ -328,9 +355,5 @@ public class ClientProxy extends ServerProxy {
             }
         }
         return true;
-    }
-
-    @SubscribeEvent
-    public void postRenderStage(RenderLevelStageEvent event) {
     }
 }
