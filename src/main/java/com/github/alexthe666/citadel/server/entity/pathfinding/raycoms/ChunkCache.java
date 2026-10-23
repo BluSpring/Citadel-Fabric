@@ -3,7 +3,12 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms;
     All of this code is used with permission from Raycoms, one of the developers of the minecolonies project.
  */
 
+import java.util.List;
+
 import com.github.alexthe666.citadel.server.world.WorldChunkUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -31,10 +36,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
-
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 
 public class ChunkCache implements LevelReader {
@@ -217,7 +218,7 @@ public class ChunkCache implements LevelReader {
     }
 
     @Override
-    public List<VoxelShape> getEntityCollisions(@org.jetbrains.annotations.Nullable final Entity p_186427_, final AABB p_186428_) {
+    public List<VoxelShape> getEntityCollisions(@Nullable final Entity p_186427_, final AABB p_186428_) {
         return null;
     }
 
