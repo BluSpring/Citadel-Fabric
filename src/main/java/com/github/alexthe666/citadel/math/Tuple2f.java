@@ -448,6 +448,7 @@ public abstract class Tuple2f implements java.io.Serializable, Cloneable {
      * @see java.lang.Cloneable
      * @since vecmath 1.3
      */
+    @Override
     public Object clone() {
         // Since there are no arrays we can just use Object.clone()
         try {

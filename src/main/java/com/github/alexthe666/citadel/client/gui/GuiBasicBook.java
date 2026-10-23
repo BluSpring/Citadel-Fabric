@@ -1,7 +1,24 @@
 package com.github.alexthe666.citadel.client.gui;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import com.github.alexthe666.citadel.Citadel;
-import com.github.alexthe666.citadel.client.gui.data.*;
+import com.github.alexthe666.citadel.client.gui.data.EntityLinkData;
+import com.github.alexthe666.citadel.client.gui.data.EntityRenderData;
+import com.github.alexthe666.citadel.client.gui.data.ImageData;
+import com.github.alexthe666.citadel.client.gui.data.ItemRenderData;
+import com.github.alexthe666.citadel.client.gui.data.LineData;
+import com.github.alexthe666.citadel.client.gui.data.LinkData;
+import com.github.alexthe666.citadel.client.gui.data.RecipeData;
+import com.github.alexthe666.citadel.client.gui.data.TabulaRenderData;
+import com.github.alexthe666.citadel.client.gui.data.Whitespace;
 import com.github.alexthe666.citadel.client.model.TabulaModel;
 import com.github.alexthe666.citadel.client.model.TabulaModelHandler;
 import com.github.alexthe666.citadel.recipe.SpecialRecipeInGuideBook;
@@ -13,6 +30,11 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.math.Axis;
 import com.mojang.serialization.JsonOps;
+import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -24,13 +46,9 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.structures.SnbtToNbt;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.sounds.SoundEvents;
@@ -43,15 +61,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
-import org.apache.commons.io.IOUtils;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-
-import org.jetbrains.annotations.Nullable;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
 
 public abstract class GuiBasicBook extends Screen {
 
@@ -188,6 +197,7 @@ public abstract class GuiBasicBook extends Screen {
         Lighting.setupFor3DItems();
     }
 
+    @Override
     protected void init() {
         super.init();
         playBookOpeningSound();
@@ -544,6 +554,7 @@ public abstract class GuiBasicBook extends Screen {
         this.buttonPreviousPage.visible = currentPageCounter > 0 || !currentPageJSON.equals(this.getRootPage());
     }
 
+    @Override
     public boolean isPauseScreen() {
         return false;
     }

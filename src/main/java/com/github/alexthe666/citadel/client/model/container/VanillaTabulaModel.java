@@ -1,16 +1,21 @@
 package com.github.alexthe666.citadel.client.model.container;
 
+import java.util.Collection;
+import java.util.function.Function;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Transformation;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.*;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemDisplayContext;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-import java.util.function.Function;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 
 /**
  * @author pau101
@@ -29,6 +34,7 @@ public class VanillaTabulaModel implements UnbakedModel {
         this.transforms = transforms;
     }
 
+    @Override
     public Collection<ResourceLocation> getDependencies() {
         return ImmutableList.of();
     }

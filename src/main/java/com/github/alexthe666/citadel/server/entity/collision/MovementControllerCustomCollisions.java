@@ -19,6 +19,7 @@ public class MovementControllerCustomCollisions extends MoveControl {
         super(mob);
     }
 
+    @Override
     public void tick() {
         if (this.operation == MoveControl.Operation.STRAFE) {
             float f = (float) this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED);

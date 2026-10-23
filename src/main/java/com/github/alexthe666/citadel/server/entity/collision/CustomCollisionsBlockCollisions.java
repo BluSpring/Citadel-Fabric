@@ -1,6 +1,8 @@
 package com.github.alexthe666.citadel.server.entity.collision;
 
 import com.google.common.collect.AbstractIterator;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Cursor3D;
 import net.minecraft.core.SectionPos;
@@ -12,9 +14,11 @@ import net.minecraft.world.level.CollisionGetter;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.*;
-
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CustomCollisionsBlockCollisions extends AbstractIterator<VoxelShape> {
     private final AABB box;
@@ -63,6 +67,7 @@ public class CustomCollisionsBlockCollisions extends AbstractIterator<VoxelShape
         }
     }
 
+    @Override
     protected VoxelShape computeNext() {
         while (true) {
             if (this.cursor.advance()) {

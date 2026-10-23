@@ -1,8 +1,12 @@
 package com.github.alexthe666.citadel.client.texture;
 
+import java.io.InputStream;
+
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
@@ -10,9 +14,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.GsonHelper;
-
-import org.jetbrains.annotations.Nullable;
-import java.io.InputStream;
 
 public class ColorMappedTexture extends SimpleTexture {
 
@@ -23,6 +24,7 @@ public class ColorMappedTexture extends SimpleTexture {
         this.colors = colors;
     }
 
+    @Override
     public void load(ResourceManager resourceManager) {
         NativeImage nativeimage = getNativeImage(resourceManager, location);
         if(nativeimage != null){
@@ -115,11 +117,13 @@ public class ColorMappedTexture extends SimpleTexture {
         private ColorsMetadataSectionSerializer() {
         }
 
+        @Override
         public ColorsMetadataSection fromJson(JsonObject json) {
 
             return new ColorsMetadataSection(ResourceLocation.parse(GsonHelper.getAsString(json, "color_ramp")));
         }
 
+        @Override
         public String getMetadataSectionName() {
             return "colors";
         }

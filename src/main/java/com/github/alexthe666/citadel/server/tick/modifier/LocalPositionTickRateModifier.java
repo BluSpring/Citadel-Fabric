@@ -32,6 +32,7 @@ public class LocalPositionTickRateModifier extends LocalTickRateModifier {
         return center;
     }
 
+    @Override
     public Vec3 getCenter(Level level) {
         return getCenter();
     }

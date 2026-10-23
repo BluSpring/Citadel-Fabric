@@ -1,10 +1,10 @@
 package com.github.alexthe666.citadel.item;
 
+import java.util.function.Supplier;
+
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ShulkerBoxBlock;
-
-import java.util.function.Supplier;
 
 public class BlockItemWithSupplier extends BlockItem {
 
@@ -20,6 +20,7 @@ public class BlockItemWithSupplier extends BlockItem {
         return blockSupplier.get();
     }
 
+    @Override
     public boolean canFitInsideContainerItems() {
         return !(blockSupplier.get() instanceof ShulkerBoxBlock);
     }

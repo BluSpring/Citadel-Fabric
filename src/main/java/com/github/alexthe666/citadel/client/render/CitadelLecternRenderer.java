@@ -25,6 +25,7 @@ public class CitadelLecternRenderer implements BlockEntityRenderer<CitadelLecter
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));
     }
 
+    @Override
     public void render(CitadelLecternBlockEntity blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int i, int j) {
         BlockState blockstate = blockEntity.getBlockState();
         if (blockstate.getValue(LecternBlock.HAS_BOOK)) {

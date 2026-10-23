@@ -1,25 +1,22 @@
 package com.github.alexthe666.citadel.client.gui;
 
-import com.github.alexthe666.citadel.Citadel;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.github.alexthe666.citadel.client.gui.data.EntityLinkData;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.HashMap;
-import java.util.Map;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 
 
 public class EntityLinkButton extends Button {
@@ -35,6 +32,7 @@ public class EntityLinkButton extends Button {
         this.bookGUI = bookGUI;
     }
 
+    @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         int lvt_5_1_ = 0;
         int lvt_6_1_ = 30;

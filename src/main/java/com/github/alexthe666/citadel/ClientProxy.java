@@ -1,5 +1,11 @@
 package com.github.alexthe666.citadel;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.event.EventRenderSplashText;
 import com.github.alexthe666.citadel.client.game.Tetris;
@@ -23,6 +29,9 @@ import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import io.github.fabricators_of_create.porting_lib.event.client.PreRenderTooltipCallback;
+import io.github.fabricators_of_create.porting_lib.event.client.RenderPlayerEvents;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -46,15 +55,6 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import io.github.fabricators_of_create.porting_lib.event.client.PreRenderTooltipCallback;
-import io.github.fabricators_of_create.porting_lib.event.client.RenderPlayerEvents;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
@@ -76,6 +76,7 @@ public class ClientProxy extends ServerProxy {
         super();
     }
 
+    @Override
     public void onClientInit() {
         try {
             CITADEL_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/citadel/models/citadel_model"));
@@ -222,9 +223,7 @@ public class ClientProxy extends ServerProxy {
 
     public boolean onKeyPressed(Screen screen, int keyCode) {
         if (screen instanceof TitleScreen && aprilFoolsTetrisGame != null && aprilFoolsTetrisGame.isStarted()) {
-            if (keyCode == InputConstants.KEY_LEFT || keyCode == InputConstants.KEY_RIGHT || keyCode == InputConstants.KEY_DOWN || keyCode == InputConstants.KEY_UP) {
-                return false;
-            }
+            return keyCode != InputConstants.KEY_LEFT && keyCode != InputConstants.KEY_RIGHT && keyCode != InputConstants.KEY_DOWN && keyCode != InputConstants.KEY_UP;
         }
 
         return true;
@@ -333,14 +332,17 @@ public class ClientProxy extends ServerProxy {
         Minecraft.getInstance().setScreen(new GuiCitadelBook(book));
     }
 
+    @Override
     public boolean isGamePaused() {
         return Minecraft.getInstance().isPaused();
     }
 
+    @Override
     public Player getClientSidePlayer() {
         return Minecraft.getInstance().player;
     }
 
+    @Override
     public boolean canEntityTickClient(Level level, Entity entity) {
         ClientTickRateTracker tracker = ClientTickRateTracker.getForClient(Minecraft.getInstance());
         if (tracker.isTickingHandled(entity)) {

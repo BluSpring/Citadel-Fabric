@@ -8,6 +8,10 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4fStack;
+import org.joml.Quaternionf;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,10 +24,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import org.joml.Matrix4fStack;
-import org.joml.Quaternionf;
-
-import org.jetbrains.annotations.Nullable;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
@@ -41,6 +41,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
     }
 
 
+    @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 16777215);
@@ -98,6 +99,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
     }
 
 
+    @Override
     protected void init() {
         super.init();
         int i = this.width / 2;

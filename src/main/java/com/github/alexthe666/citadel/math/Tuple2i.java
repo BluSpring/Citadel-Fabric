@@ -383,6 +383,7 @@ public abstract class Tuple2i implements java.io.Serializable, Cloneable {
      * @exception OutOfMemoryError if there is not enough memory.
      * @see java.lang.Cloneable
      */
+    @Override
     public Object clone() {
         // Since there are no arrays we can just use Object.clone()
         try {

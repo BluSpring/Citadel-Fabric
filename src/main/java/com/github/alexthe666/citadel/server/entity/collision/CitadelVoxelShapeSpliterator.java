@@ -1,5 +1,13 @@
 package com.github.alexthe666.citadel.server.entity.collision;
 
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Cursor3D;
 import net.minecraft.util.Mth;
@@ -14,13 +22,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import org.jetbrains.annotations.Nullable;
-import java.util.Objects;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.function.BiPredicate;
-import java.util.function.Consumer;
 
 public class CitadelVoxelShapeSpliterator extends Spliterators.AbstractSpliterator<VoxelShape> {
     @Nullable
@@ -73,6 +74,7 @@ public class CitadelVoxelShapeSpliterator extends Spliterators.AbstractSpliterat
         return p_234877_1_.minX > d0 && p_234877_1_.minX < d2 && p_234877_1_.minZ > d1 && p_234877_1_.minZ < d3 && p_234877_1_.maxX > d0 && p_234877_1_.maxX < d2 && p_234877_1_.maxZ > d1 && p_234877_1_.maxZ < d3;
     }
 
+    @Override
     public boolean tryAdvance(Consumer<? super VoxelShape> p_tryAdvance_1_) {
         return this.needsBorderCheck && this.worldBorderCheck(p_tryAdvance_1_) || this.collisionCheck(p_tryAdvance_1_);
     }

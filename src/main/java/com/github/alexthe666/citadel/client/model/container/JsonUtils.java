@@ -1,37 +1,46 @@
 package com.github.alexthe666.citadel.client.model.container;
 
-import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Type;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+
 public class JsonUtils
 {
     public static boolean isString(JsonObject json, String memberName)
     {
-        return !isJsonPrimitive(json, memberName) ? false : json.getAsJsonPrimitive(memberName).isString();
+        return isJsonPrimitive(json, memberName) && json.getAsJsonPrimitive(memberName).isString();
     }
 
     public static boolean isString(JsonElement json)
     {
-        return !json.isJsonPrimitive() ? false : json.getAsJsonPrimitive().isString();
+        return json.isJsonPrimitive() && json.getAsJsonPrimitive().isString();
     }
 
     public static boolean isNumber(JsonElement json)
     {
-        return !json.isJsonPrimitive() ? false : json.getAsJsonPrimitive().isNumber();
+        return json.isJsonPrimitive() && json.getAsJsonPrimitive().isNumber();
     }
 
     public static boolean isBoolean(JsonObject json, String memberName)
     {
-        return !isJsonPrimitive(json, memberName) ? false : json.getAsJsonPrimitive(memberName).isBoolean();
+        return isJsonPrimitive(json, memberName) && json.getAsJsonPrimitive(memberName).isBoolean();
     }
 
     /**
@@ -39,7 +48,7 @@ public class JsonUtils
      */
     public static boolean isJsonArray(JsonObject json, String memberName)
     {
-        return !hasField(json, memberName) ? false : json.get(memberName).isJsonArray();
+        return hasField(json, memberName) && json.get(memberName).isJsonArray();
     }
 
     /**
@@ -48,7 +57,7 @@ public class JsonUtils
      */
     public static boolean isJsonPrimitive(JsonObject json, String memberName)
     {
-        return !hasField(json, memberName) ? false : json.get(memberName).isJsonPrimitive();
+        return hasField(json, memberName) && json.get(memberName).isJsonPrimitive();
     }
 
     /**

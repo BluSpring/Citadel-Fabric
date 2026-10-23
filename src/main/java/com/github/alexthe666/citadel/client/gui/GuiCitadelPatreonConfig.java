@@ -64,12 +64,14 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
         return value;
     }
 
+    @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 16777215);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
+    @Override
     protected void init() {
         super.init();
         int i = this.width / 2;
