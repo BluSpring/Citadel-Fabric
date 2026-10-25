@@ -36,7 +36,7 @@ public class CitadelLecternBlock extends LecternBlock {
                 book.use(level, player, InteractionHand.MAIN_HAND);
             }
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
 
