@@ -1,8 +1,12 @@
 package com.github.alexthe666.citadel.client.model.container;
 
+import java.util.List;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.math.Transformation;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
@@ -12,8 +16,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
-
-import java.util.List;
 
 public class BakedTabulaModel implements BakedModel {
     private final ImmutableList<BakedQuad> quads;
@@ -27,7 +29,7 @@ public class BakedTabulaModel implements BakedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@org.jetbrains.annotations.Nullable BlockState p_235039_, @org.jetbrains.annotations.Nullable Direction p_235040_, RandomSource p_235041_) {
+    public List<BakedQuad> getQuads(@Nullable BlockState p_235039_, @Nullable Direction p_235040_, RandomSource p_235041_) {
         return this.quads;
     }
 

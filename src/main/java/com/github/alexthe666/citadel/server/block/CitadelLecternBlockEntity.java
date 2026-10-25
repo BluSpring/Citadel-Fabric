@@ -1,6 +1,9 @@
 package com.github.alexthe666.citadel.server.block;
 
+import javax.annotation.Nullable;
+
 import com.github.alexthe666.citadel.Citadel;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -19,24 +22,26 @@ import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nullable;
-
 public class CitadelLecternBlockEntity extends BlockEntity implements Clearable, MenuProvider {
     private ItemStack book = ItemStack.EMPTY;
 
     private final Container bookAccess = new Container() {
+        @Override
         public int getContainerSize() {
             return 1;
         }
 
+        @Override
         public boolean isEmpty() {
             return CitadelLecternBlockEntity.this.book.isEmpty();
         }
 
+        @Override
         public ItemStack getItem(int i) {
             return i == 0 ? CitadelLecternBlockEntity.this.book : ItemStack.EMPTY;
         }
 
+        @Override
         public ItemStack removeItem(int i, int j) {
             if (i == 0) {
                 ItemStack itemstack = CitadelLecternBlockEntity.this.book.split(j);
@@ -50,6 +55,7 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
             }
         }
 
+        @Override
         public ItemStack removeItemNoUpdate(int i) {
             if (i == 0) {
                 ItemStack itemstack = CitadelLecternBlockEntity.this.book;
@@ -61,41 +67,50 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
             }
         }
 
+        @Override
         public void setItem(int i, ItemStack stack) {
         }
 
+        @Override
         public int getMaxStackSize() {
             return 1;
         }
 
+        @Override
         public void setChanged() {
             CitadelLecternBlockEntity.this.setChanged();
         }
 
+        @Override
         public boolean stillValid(Player p_59588_) {
             if (CitadelLecternBlockEntity.this.level.getBlockEntity(CitadelLecternBlockEntity.this.worldPosition) != CitadelLecternBlockEntity.this) {
                 return false;
             } else {
-                return p_59588_.distanceToSqr((double) CitadelLecternBlockEntity.this.worldPosition.getX() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getY() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getZ() + 0.5D) > 64.0D ? false : CitadelLecternBlockEntity.this.hasBook();
+                return !(p_59588_.distanceToSqr((double) CitadelLecternBlockEntity.this.worldPosition.getX() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getY() + 0.5D, (double) CitadelLecternBlockEntity.this.worldPosition.getZ() + 0.5D) > 64.0D) && CitadelLecternBlockEntity.this.hasBook();
             }
         }
 
+        @Override
         public boolean canPlaceItem(int i, ItemStack stack) {
             return false;
         }
 
+        @Override
         public void clearContent() {
         }
     };
     //dummy container for page turning
     private final ContainerData dataAccess = new ContainerData() {
+        @Override
         public int get(int i) {
             return 0;
         }
 
+        @Override
         public void set(int i, int j) {
         }
 
+        @Override
         public int getCount() {
             return 1;
         }
@@ -148,14 +163,17 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
         }
     }
 
+    @Override
     public void clearContent() {
         this.setBook(ItemStack.EMPTY);
     }
 
+    @Override
     public AbstractContainerMenu createMenu(int i, Inventory inventory, Player player) {
         return new LecternMenu(i, this.bookAccess, this.dataAccess);
     }
 
+    @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
         return ClientboundBlockEntityDataPacket.create(this);
     }
@@ -165,6 +183,7 @@ public class CitadelLecternBlockEntity extends BlockEntity implements Clearable,
         return this.saveWithoutMetadata(registries);
     }
 
+    @Override
     public Component getDisplayName() {
         return Component.translatable("container.lectern");
     }

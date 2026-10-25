@@ -1,5 +1,11 @@
 package com.github.alexthe666.citadel;
 
+import java.awt.Color;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.citadel.client.CitadelItemRenderProperties;
 import com.github.alexthe666.citadel.client.event.EventRenderSplashText;
@@ -24,6 +30,16 @@ import com.github.alexthe666.citadel.server.event.EventChangeEntityTickRate;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.RenderPlayerEvent;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.TriState;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -42,17 +58,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.TriState;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 public class ClientProxy extends ServerProxy {
     public static TabulaModel CITADEL_MODEL;
@@ -68,6 +73,7 @@ public class ClientProxy extends ServerProxy {
         super();
     }
 
+    @Override
     public void onClientInit() {
         try {
             CITADEL_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/citadel/models/citadel_model"));
@@ -305,14 +311,17 @@ public class ClientProxy extends ServerProxy {
         Minecraft.getInstance().setScreen(new GuiCitadelBook(book));
     }
 
+    @Override
     public boolean isGamePaused() {
         return Minecraft.getInstance().isPaused();
     }
 
+    @Override
     public Player getClientSidePlayer() {
         return Minecraft.getInstance().player;
     }
 
+    @Override
     public boolean canEntityTickClient(Level level, Entity entity) {
         ClientTickRateTracker tracker = ClientTickRateTracker.getForClient(Minecraft.getInstance());
         if (tracker.isTickingHandled(entity)) {

@@ -19,6 +19,7 @@ public class BookPageButton extends Button {
         this.bookGUI = bookGUI;
     }
 
+    @Override
     public void renderWidget(GuiGraphics p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
         int lvt_5_1_ = 0;
         int lvt_6_1_ = 0;
@@ -43,6 +44,7 @@ public class BookPageButton extends Button {
         }
     }
 
+    @Override
     public void playDownSound(SoundManager p_230988_1_) {
         if (this.playTurnSound) {
             p_230988_1_.play(SimpleSoundInstance.forUI(SoundEvents.BOOK_PAGE_TURN, 1.0F));

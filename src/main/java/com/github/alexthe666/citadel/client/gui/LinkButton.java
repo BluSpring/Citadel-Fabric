@@ -21,13 +21,13 @@ public class LinkButton extends Button {
     public ItemStack previewStack;
     public GuiBasicBook book;
 
-    public LinkButton(GuiBasicBook book, int x, int y, int width, int height, Component component, ItemStack previewStack, net.minecraft.client.gui.components.Button.OnPress onPress) {
+    public LinkButton(GuiBasicBook book, int x, int y, int width, int height, Component component, ItemStack previewStack, Button.OnPress onPress) {
         super(x, y, width + (previewStack.isEmpty() ? 0 : 6), height, component, onPress, Button.DEFAULT_NARRATION);
         this.previewStack = previewStack;
         this.book = book;
     }
 
-    public LinkButton(GuiBasicBook book, int x, int y, int width, int height, Component component, net.minecraft.client.gui.components.Button.OnPress onPress) {
+    public LinkButton(GuiBasicBook book, int x, int y, int width, int height, Component component, Button.OnPress onPress) {
         this(book, x, y, width, height, component, ItemStack.EMPTY, onPress);
     }
 

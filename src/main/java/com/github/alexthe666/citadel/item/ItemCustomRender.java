@@ -1,8 +1,11 @@
 package com.github.alexthe666.citadel.item;
 
+import java.util.function.Consumer;
+
 import com.github.alexthe666.citadel.Citadel;
-import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+
+import net.minecraft.world.item.Item;
 
 public class ItemCustomRender extends Item {
 
@@ -12,7 +15,7 @@ public class ItemCustomRender extends Item {
 
     @SuppressWarnings("removal")
     @Override
-    public void initializeClient(java.util.function.Consumer<IClientItemExtensions> consumer) {
+    public void initializeClient(Consumer<IClientItemExtensions> consumer) {
         consumer.accept(((IClientItemExtensions) Citadel.PROXY.getISTERProperties()));
     }
 }

@@ -2,6 +2,11 @@ package com.github.alexthe666.citadel.mixin;
 
 import com.github.alexthe666.citadel.CitadelConstants;
 import com.github.alexthe666.citadel.server.entity.ICitadelDataEntity;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -10,10 +15,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 
 @Mixin(LivingEntity.class)
@@ -45,10 +46,12 @@ public abstract class LivingEntityMixin extends Entity implements ICitadelDataEn
         }
     }
 
+    @Override
     public CompoundTag getCitadelEntityData() {
         return entityData.get(CITADEL_DATA);
     }
 
+    @Override
     public void setCitadelEntityData(CompoundTag nbt) {
         entityData.set(CITADEL_DATA, nbt);
     }

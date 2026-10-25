@@ -1,18 +1,19 @@
 package com.github.alexthe666.citadel.client.tick;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.github.alexthe666.citadel.server.tick.TickRateTracker;
 import com.github.alexthe666.citadel.server.tick.modifier.TickRateModifier;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class ClientTickRateTracker extends TickRateTracker {
     public static final Logger LOGGER = LogManager.getLogger("citadel-client-tick");
@@ -41,6 +42,7 @@ public class ClientTickRateTracker extends TickRateTracker {
         return dataMap.get(minecraft);
     }
 
+    @Override
     public void masterTick(){
         super.masterTick();
         if(client.getTimer() instanceof DeltaTracker.Timer timer){

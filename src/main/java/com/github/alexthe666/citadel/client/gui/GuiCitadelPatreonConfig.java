@@ -3,6 +3,9 @@ package com.github.alexthe666.citadel.client.gui;
 import com.github.alexthe666.citadel.client.rewards.CitadelPatreonRenderer;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
 import com.github.alexthe666.citadel.server.message.PropertiesMessage;
+import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
+import net.neoforged.neoforge.network.PacketDistributor;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -12,8 +15,6 @@ import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class GuiCitadelPatreonConfig extends OptionsSubScreen {
 
@@ -62,12 +63,14 @@ public class GuiCitadelPatreonConfig extends OptionsSubScreen {
         return value;
     }
 
+    @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 16777215);
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
+    @Override
     protected void init() {
         super.init();
         int i = this.width / 2;

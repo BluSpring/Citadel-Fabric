@@ -1,8 +1,9 @@
 package com.github.alexthe666.citadel.math;
 
 import java.io.Serial;
+import java.io.Serializable;
 
-public class Point2f extends Tuple2f implements java.io.Serializable {
+public class Point2f extends Tuple2f implements Serializable {
 
     // Compatible with 1.1
     @Serial

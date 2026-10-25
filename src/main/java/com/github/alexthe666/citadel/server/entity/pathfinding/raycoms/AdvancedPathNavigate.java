@@ -3,17 +3,25 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms;
     All of this code is used with permission from Raycoms, one of the developers of the minecolonies project.
  */
 
+import java.util.Arrays;
+import java.util.HashSet;
+
+import javax.annotation.Nullable;
+
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.AbstractPathJob;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.PathJobMoveAwayFromLocation;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.PathJobMoveToLocation;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.PathJobRandomPos;
 import com.github.alexthe666.citadel.server.world.WorldChunkUtil;
+import org.jetbrains.annotations.NotNull;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.protocol.game.DebugPackets;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
@@ -22,14 +30,13 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.pathfinder.*;
+import net.minecraft.world.level.pathfinder.FlyNodeEvaluator;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.HashSet;
 
 /**
  * Minecolonies async PathNavigate.
@@ -186,7 +193,7 @@ public class AdvancedPathNavigate extends AbstractAdvancedPathNavigate {
     }
 
     @Override
-    public PathResult moveToRandomPos(final int range, final double speedFactor, final net.minecraft.util.Tuple<BlockPos, BlockPos> corners, final AbstractAdvancedPathNavigate.RestrictionType restrictionType)
+    public PathResult moveToRandomPos(final int range, final double speedFactor, final Tuple<BlockPos, BlockPos> corners, final AbstractAdvancedPathNavigate.RestrictionType restrictionType)
     {
         if (pathResult != null && pathResult.getJob() instanceof PathJobRandomPos)
         {

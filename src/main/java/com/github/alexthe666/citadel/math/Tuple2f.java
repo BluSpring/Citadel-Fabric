@@ -2,12 +2,13 @@
 package com.github.alexthe666.citadel.math;
 
 import java.io.Serial;
+import java.io.Serializable;
 
 /**
  * A generic 2-element tuple that is represented by single-precision
  * floating point x,y coordinates.
  */
-public abstract class Tuple2f implements java.io.Serializable, Cloneable {
+public abstract class Tuple2f implements Serializable, Cloneable {
 
     @Serial
     private static final long serialVersionUID = 9011180388985266884L;
@@ -445,9 +446,10 @@ public abstract class Tuple2f implements java.io.Serializable, Cloneable {
      *
      * @return a clone of this instance.
      * @throws OutOfMemoryError if there is not enough memory.
-     * @see java.lang.Cloneable
+     * @see Cloneable
      * @since vecmath 1.3
      */
+    @Override
     public Object clone() {
         // Since there are no arrays we can just use Object.clone()
         try {

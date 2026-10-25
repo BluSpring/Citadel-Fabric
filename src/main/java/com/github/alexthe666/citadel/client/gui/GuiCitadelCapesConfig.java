@@ -1,5 +1,7 @@
 package com.github.alexthe666.citadel.client.gui;
 
+import javax.annotation.Nullable;
+
 import com.github.alexthe666.citadel.ClientProxy;
 import com.github.alexthe666.citadel.client.rewards.CitadelCapes;
 import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
@@ -8,6 +10,10 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.joml.Matrix4fStack;
+import org.joml.Quaternionf;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,11 +26,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.network.PacketDistributor;
-import org.joml.Matrix4fStack;
-import org.joml.Quaternionf;
-
-import javax.annotation.Nullable;
 
 public class GuiCitadelCapesConfig extends OptionsSubScreen {
 
@@ -40,6 +41,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
     }
 
 
+    @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 20, 16777215);
@@ -97,6 +99,7 @@ public class GuiCitadelCapesConfig extends OptionsSubScreen {
     }
 
 
+    @Override
     protected void init() {
         super.init();
         int i = this.width / 2;
