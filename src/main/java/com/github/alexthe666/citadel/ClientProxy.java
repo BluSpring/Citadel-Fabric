@@ -51,7 +51,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -67,7 +67,7 @@ public class ClientProxy extends ServerProxy {
     private Map<ItemStack, Float> mouseOverProgresses = new HashMap<>();
     private ItemStack lastHoveredItem = null;
     private Tetris aprilFoolsTetrisGame = null;
-    public static final ResourceLocation RAINBOW_AURA_POST_SHADER = ResourceLocation.parse("citadel:shaders/post/rainbow_aura.json");
+    public static final Identifier RAINBOW_AURA_POST_SHADER = Identifier.parse("citadel:shaders/post/rainbow_aura.json");
 
     public ClientProxy() {
         super();
@@ -81,9 +81,9 @@ public class ClientProxy extends ServerProxy {
             e.printStackTrace();
         }
         BlockEntityRenderers.register(Citadel.LECTERN_BE.get(), CitadelLecternRenderer::new);
-        CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station"), new int[]{}));
-        CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
-        CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(ResourceLocation.parse("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
+        CitadelPatreonRenderer.register("citadel", new SpaceStationPatreonRenderer(Identifier.parse("citadel:patreon_space_station"), new int[]{}));
+        CitadelPatreonRenderer.register("citadel_red", new SpaceStationPatreonRenderer(Identifier.parse("citadel:patreon_space_station_red"), new int[]{0XB25048, 0X9D4540, 0X7A3631, 0X71302A}));
+        CitadelPatreonRenderer.register("citadel_gray", new SpaceStationPatreonRenderer(Identifier.parse("citadel:patreon_space_station_gray"), new int[]{0XA0A0A0, 0X888888, 0X646464, 0X575757}));
         if (CitadelConstants.debugShaders()) {
             PostEffectRegistry.registerEffect(RAINBOW_AURA_POST_SHADER);
         }

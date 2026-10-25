@@ -30,7 +30,7 @@ import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 
 public class TabulaModelBlock
@@ -49,7 +49,7 @@ public class TabulaModelBlock
     @VisibleForTesting
     public TabulaModelBlock parent;
     @VisibleForTesting
-    protected ResourceLocation parentLocation;
+    protected Identifier parentLocation;
 
     public static TabulaModelBlock deserialize(Reader readerIn)
     {
@@ -61,7 +61,7 @@ public class TabulaModelBlock
         return deserialize(new StringReader(jsonString));
     }
 
-    public TabulaModelBlock(@Nullable ResourceLocation parentLocationIn, List<BlockElement> elementsIn, Map<String, String> texturesIn, boolean ambientOcclusionIn, boolean gui3dIn, ItemTransforms cameraTransformsIn, List<ItemOverride> overridesIn)
+    public TabulaModelBlock(@Nullable Identifier parentLocationIn, List<BlockElement> elementsIn, Map<String, String> texturesIn, boolean ambientOcclusionIn, boolean gui3dIn, ItemTransforms cameraTransformsIn, List<ItemOverride> overridesIn)
     {
         this.elements = elementsIn;
         this.ambientOcclusion = ambientOcclusionIn;
@@ -97,7 +97,7 @@ public class TabulaModelBlock
         return this.parentLocation == null || this.parent != null && this.parent.isResolved();
     }
 
-    public void getParentFromMap(Map<ResourceLocation, TabulaModelBlock> p_178299_1_)
+    public void getParentFromMap(Map<Identifier, TabulaModelBlock> p_178299_1_)
     {
         if (this.parentLocation != null)
         {
@@ -105,9 +105,9 @@ public class TabulaModelBlock
         }
     }
 
-    public Collection<ResourceLocation> getOverrideLocations()
+    public Collection<Identifier> getOverrideLocations()
     {
-        Set<ResourceLocation> set = Sets.newHashSet();
+        Set<Identifier> set = Sets.newHashSet();
 
         for (ItemOverride itemoverride : this.overrides)
         {
@@ -177,7 +177,7 @@ public class TabulaModelBlock
     }
 
     @Nullable
-    public ResourceLocation getParentLocation()
+    public Identifier getParentLocation()
     {
         return this.parentLocation;
     }
@@ -205,7 +205,7 @@ public class TabulaModelBlock
         return this.parent != null && !this.cameraTransforms.hasTransform(type) ? this.parent.getTransform(type) : this.cameraTransforms.getTransform(type);
     }
 
-    public static void checkModelHierarchy(Map<ResourceLocation, TabulaModelBlock> p_178312_0_)
+    public static void checkModelHierarchy(Map<Identifier, TabulaModelBlock> p_178312_0_)
     {
         for (TabulaModelBlock TabulaModelBlock : p_178312_0_.values())
         {
@@ -256,7 +256,7 @@ public class TabulaModelBlock
             }
 
             List<ItemOverride> list1 = this.getItemOverrides(p_deserialize_3_, jsonobject);
-            ResourceLocation resourcelocation = s.isEmpty() ? null : ResourceLocation.parse(s);
+            Identifier resourcelocation = s.isEmpty() ? null : Identifier.parse(s);
             return new TabulaModelBlock(resourcelocation, list, map, flag, true, itemcameratransforms, list1);
         }
 

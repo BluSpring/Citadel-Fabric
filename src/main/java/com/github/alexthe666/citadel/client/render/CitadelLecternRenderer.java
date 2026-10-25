@@ -12,14 +12,14 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class CitadelLecternRenderer implements BlockEntityRenderer<CitadelLecternBlockEntity> {
     private final BookModel bookModel;
-    public static final ResourceLocation BOOK_PAGE_TEXTURE =  ResourceLocation.parse("citadel:textures/entity/lectern_book_pages.png");
-    public static final ResourceLocation BOOK_BINDING_TEXTURE = ResourceLocation.parse("citadel:textures/entity/lectern_book_binding.png");
+    public static final Identifier BOOK_PAGE_TEXTURE =  Identifier.parse("citadel:textures/entity/lectern_book_pages.png");
+    public static final Identifier BOOK_BINDING_TEXTURE = Identifier.parse("citadel:textures/entity/lectern_book_binding.png");
     private static final LecternBooks.BookData EMPTY_BOOK_DATA = new LecternBooks.BookData(0XC58439, 0XF4E9BF);
     public CitadelLecternRenderer(BlockEntityRendererProvider.Context context) {
         this.bookModel = new BookModel(context.bakeLayer(ModelLayers.BOOK));

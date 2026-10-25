@@ -1,10 +1,19 @@
 package com.github.alexthe666.citadel.client;
 
+import java.util.List;
+import java.util.Random;
+
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.item.component.CustomRenderDisplay;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.Tesselator;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.math.Axis;
+import org.joml.Matrix4f;
+
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -14,22 +23,16 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.joml.Matrix4f;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
 
-    private static final ResourceLocation DEFAULT_ICON_TEXTURE = ResourceLocation.parse("citadel:textures/gui/book/icon_default.png");
+    private static final Identifier DEFAULT_ICON_TEXTURE = Identifier.parse("citadel:textures/gui/book/icon_default.png");
 
     private static List<Holder.Reference<MobEffect>> mobEffectList = null;
 
@@ -114,7 +117,7 @@ public class CitadelItemstackRenderer extends BlockEntityWithoutLevelRenderer {
             poseStack.popPose();
         }
         if (stack.getItem() == Citadel.ICON_ITEM.get()) {
-            ResourceLocation texture = stack.getOrDefault(Citadel.ICON_LOCATION, DEFAULT_ICON_TEXTURE);
+            Identifier texture = stack.getOrDefault(Citadel.ICON_LOCATION, DEFAULT_ICON_TEXTURE);
             poseStack.pushPose();
             poseStack.translate(0, 0, 0.5F);
             RenderSystem.setShader(GameRenderer::getPositionTexShader);

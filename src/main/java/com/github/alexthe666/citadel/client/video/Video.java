@@ -1,7 +1,22 @@
 package com.github.alexthe666.citadel.client.video;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
 import com.github.alexthe666.citadel.client.texture.VideoFrameTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.loading.FMLPaths;
 import net.sourceforge.jaad.spi.javasound.AACAudioFileReader;
 import org.apache.logging.log4j.LogManager;
@@ -15,20 +30,7 @@ import org.jcodec.scale.ColorUtil;
 import org.jcodec.scale.RgbToBgr;
 import org.jcodec.scale.Transform;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import net.minecraft.resources.Identifier;
 
 public class Video {
 
@@ -41,7 +43,7 @@ public class Video {
     private boolean muted;
 
     private String url;
-    private ResourceLocation resourceLocation;
+    private Identifier resourceLocation;
     private VideoFrameTexture texture;
 
     private FrameGrab frameGrabber = null;
@@ -53,7 +55,7 @@ public class Video {
     private long pausedAudioTime = 0;
     private Clip audioClip;
 
-    public Video(String url, ResourceLocation resourceLocation, VideoFrameTexture texture, double framesPerSecond, boolean muted) {
+    public Video(String url, Identifier resourceLocation, VideoFrameTexture texture, double framesPerSecond, boolean muted) {
         this.url = url;
         this.resourceLocation = resourceLocation;
         this.texture = texture;
@@ -184,7 +186,7 @@ public class Video {
         this.framesPerSecond = framesPerSecond;
     }
 
-    public ResourceLocation getResourceLocation() {
+    public Identifier getResourceLocation() {
         return resourceLocation;
     }
 

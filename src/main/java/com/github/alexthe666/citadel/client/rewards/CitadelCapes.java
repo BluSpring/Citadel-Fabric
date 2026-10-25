@@ -1,19 +1,25 @@
 package com.github.alexthe666.citadel.client.rewards;
 
-import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
-import java.util.*;
+
+import com.github.alexthe666.citadel.server.entity.CitadelEntityData;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Player;
 
 public class CitadelCapes {
 
     private static final List<Cape> CAPES = new ArrayList<>();
     private static final Map<UUID, Boolean> HAS_CAPES_ENABLED = new LinkedHashMap<>();
 
-    public static void addCapeFor(List<UUID> uuids, String translationKey, ResourceLocation texture) {
+    public static void addCapeFor(List<UUID> uuids, String translationKey, Identifier texture) {
         CAPES.add(new Cape(uuids, translationKey, texture));
     }
 
@@ -81,9 +87,9 @@ public class CitadelCapes {
     public static class Cape{
         private List<UUID> isFor;
         private String identifier;
-        private ResourceLocation texture;
+        private Identifier texture;
 
-        public Cape(List<UUID> isFor, String identifier, ResourceLocation texture) {
+        public Cape(List<UUID> isFor, String identifier, Identifier texture) {
             this.isFor = isFor;
             this.identifier = identifier;
             this.texture = texture;
@@ -97,7 +103,7 @@ public class CitadelCapes {
             return identifier;
         }
 
-        public ResourceLocation getTexture() {
+        public Identifier getTexture() {
             return texture;
         }
 

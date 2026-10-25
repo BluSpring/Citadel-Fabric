@@ -1,5 +1,11 @@
 package com.github.alexthe666.citadel;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 import com.github.alexthe666.citadel.config.ConfigHolder;
 import com.github.alexthe666.citadel.config.ServerConfig;
 import com.github.alexthe666.citadel.item.ItemCitadelBook;
@@ -12,22 +18,14 @@ import com.github.alexthe666.citadel.server.block.CitadelLecternBlockEntity;
 import com.github.alexthe666.citadel.server.block.LecternBooks;
 import com.github.alexthe666.citadel.server.generation.SpawnProbabilityModifier;
 import com.github.alexthe666.citadel.server.generation.VillageHouseManager;
-import com.github.alexthe666.citadel.server.message.*;
+import com.github.alexthe666.citadel.server.message.AnimationMessage;
+import com.github.alexthe666.citadel.server.message.DanceJukeboxMessage;
+import com.github.alexthe666.citadel.server.message.PropertiesMessage;
+import com.github.alexthe666.citadel.server.message.SyncClientTickRateMessage;
+import com.github.alexthe666.citadel.server.message.SyncPathReachedMessage;
+import com.github.alexthe666.citadel.server.message.SyncePathMessage;
 import com.github.alexthe666.citadel.web.WebHelper;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -50,11 +48,18 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 @Mod("citadel")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
@@ -76,7 +81,7 @@ public class Citadel {
     public static final DeferredHolder<Item, ItemCustomRender> ICON_ITEM = ITEMS.register("icon_item", () -> new ItemCustomRender(new Item.Properties().stacksTo(1)));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CustomRenderDisplay>> CUSTOM_RENDER_DISPLAY = DATA_COMPONENTS.registerComponentType("custom_render_display", builder -> builder.persistent(CustomRenderDisplay.CODEC));
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<ResourceLocation>> ICON_LOCATION = DATA_COMPONENTS.registerComponentType("icon_location", builder -> builder.persistent(ResourceLocation.CODEC).networkSynchronized(ResourceLocation.STREAM_CODEC));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Identifier>> ICON_LOCATION = DATA_COMPONENTS.registerComponentType("icon_location", builder -> builder.persistent(Identifier.CODEC).networkSynchronized(Identifier.STREAM_CODEC));
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<ResourceKey<MobEffect>>> DISPLAY_EFFECT = DATA_COMPONENTS.registerComponentType("display_effect", builder -> builder.persistent(ResourceKey.codec(Registries.MOB_EFFECT)).networkSynchronized(ResourceKey.streamCodec(Registries.MOB_EFFECT)));
 
     public static final Supplier<Block> LECTERN = BLOCKS.register("lectern", () -> new CitadelLecternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LECTERN)));
@@ -129,7 +134,7 @@ public class Citadel {
             ServerConfig.citadelEntityTrack = ConfigHolder.SERVER.citadelEntityTracker.get();
             ServerConfig.chunkGenSpawnModifierVal = ConfigHolder.SERVER.chunkGenSpawnModifier.get();
             ServerConfig.aprilFools = ConfigHolder.SERVER.aprilFoolsContent.get();
-            //citadelTestBiomeData = SpawnBiomeConfig.create(ResourceLocation.parse("citadel:config_biome"), CitadelBiomeDefinitions.TERRALITH_TEST);
+            //citadelTestBiomeData = SpawnBiomeConfig.create(Identifier.parse("citadel:config_biome"), CitadelBiomeDefinitions.TERRALITH_TEST);
         }
     }
 

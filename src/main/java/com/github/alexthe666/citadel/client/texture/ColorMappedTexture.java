@@ -9,7 +9,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 
 import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -20,7 +20,7 @@ public class ColorMappedTexture extends SimpleTexture {
 
     private int[] colors;
 
-    public ColorMappedTexture(ResourceLocation resourceLocation, int[] colors) {
+    public ColorMappedTexture(Identifier resourceLocation, int[] colors) {
         super(resourceLocation);
         this.colors = colors;
     }
@@ -47,7 +47,7 @@ public class ColorMappedTexture extends SimpleTexture {
         }
     }
 
-    private NativeImage getNativeImage(ResourceManager resourceManager, @Nullable ResourceLocation resourceLocation) {
+    private NativeImage getNativeImage(ResourceManager resourceManager, @Nullable Identifier resourceLocation) {
         Resource resource = null;
         if(resourceLocation == null){
             return null;
@@ -94,8 +94,8 @@ public class ColorMappedTexture extends SimpleTexture {
 
         public static final ColorsMetadataSectionSerializer SERIALIZER = new ColorsMetadataSectionSerializer();
 
-        private ResourceLocation colorRamp;
-        public ColorsMetadataSection(ResourceLocation colorRamp) {
+        private Identifier colorRamp;
+        public ColorsMetadataSection(Identifier colorRamp) {
             this.colorRamp = colorRamp;
         }
 
@@ -109,7 +109,7 @@ public class ColorMappedTexture extends SimpleTexture {
             return r1 == r2 && g1 == g2 && b1 == b2;
         }
 
-        public ResourceLocation getColorRamp(){
+        public Identifier getColorRamp(){
             return colorRamp;
         }
     }
@@ -121,7 +121,7 @@ public class ColorMappedTexture extends SimpleTexture {
         @Override
         public ColorsMetadataSection fromJson(JsonObject json) {
 
-            return new ColorsMetadataSection(ResourceLocation.parse(GsonHelper.getAsString(json, "color_ramp")));
+            return new ColorsMetadataSection(Identifier.parse(GsonHelper.getAsString(json, "color_ramp")));
         }
 
         @Override

@@ -1,17 +1,18 @@
 package com.github.alexthe666.citadel.server.message;
 
 import com.github.alexthe666.citadel.Citadel;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class DanceJukeboxMessage implements CustomPacketPayload {
 
-    public static final CustomPacketPayload.Type<DanceJukeboxMessage> TYPE = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("citadel", "dance_jukebox"));
+    public static final CustomPacketPayload.Type<DanceJukeboxMessage> TYPE = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath("citadel", "dance_jukebox"));
     public static final StreamCodec<FriendlyByteBuf, DanceJukeboxMessage> CODEC = StreamCodec.ofMember(DanceJukeboxMessage::write, DanceJukeboxMessage::read);
 
     public int entityID;

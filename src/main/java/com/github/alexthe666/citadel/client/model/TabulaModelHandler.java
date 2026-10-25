@@ -1,21 +1,31 @@
 package com.github.alexthe666.citadel.client.model;
 
-import com.github.alexthe666.citadel.client.model.container.TabulaCubeContainer;
-import com.github.alexthe666.citadel.client.model.container.TabulaCubeGroupContainer;
-import com.github.alexthe666.citadel.client.model.container.TabulaModelBlock;
-import com.github.alexthe666.citadel.client.model.container.TabulaModelContainer;
-import com.google.gson.*;
-import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.server.packs.resources.ResourceManager;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import com.github.alexthe666.citadel.client.model.container.TabulaCubeContainer;
+import com.github.alexthe666.citadel.client.model.container.TabulaCubeGroupContainer;
+import com.github.alexthe666.citadel.client.model.container.TabulaModelBlock;
+import com.github.alexthe666.citadel.client.model.container.TabulaModelContainer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 /**
  * @author pau101
@@ -147,33 +157,33 @@ public enum TabulaModelHandler implements JsonDeserializationContext {
     }
 
     @Override
-    public boolean accepts(ResourceLocation modelLocation) {
+    public boolean accepts(Identifier modelLocation) {
         return this.enabledDomains.contains(modelLocation.getNamespace()) && modelLocation.getPath().endsWith(".tbl");
     }
 
     @Override
-    public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception {
+    public IUnbakedModel loadModel(Identifier modelLocation) throws Exception {
         String modelPath = modelLocation.getPath();
         modelPath = modelPath.substring(0, modelPath.lastIndexOf('.')) + ".json";
-        IResource resource = this.manager.getResource(ResourceLocation.parse(modelLocation.getPath(), modelPath));
+        IResource resource = this.manager.getResource(Identifier.parse(modelLocation.getPath(), modelPath));
         InputStreamReader jsonStream = new InputStreamReader(resource.getInputStream());
         JsonElement json = this.parser.parse(jsonStream);
         jsonStream.close();
         TabulaModelBlock TabulaModelBlock = this.TabulaModelBlockDeserializer.deserialize(json, TabulaModelBlock.class, this);
         String tblLocationStr = json.getAsJsonObject().get("tabula").getAsString() + ".tbl";
-        ResourceLocation tblLocation = ResourceLocation.parse(tblLocationStr);
+        Identifier tblLocation = Identifier.parse(tblLocationStr);
         IResource tblResource = this.manager.getResource(tblLocation);
         InputStream modelStream = this.getModelJsonStream(tblLocation.toString(), tblResource.getInputStream());
         TabulaModelContainer modelJson = TabulaModelHandler.INSTANCE.loadTabulaModel(modelStream);
         modelStream.close();
-        ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
+        ImmutableList.Builder<Identifier> builder = ImmutableList.builder();
         int layer = 0;
         String texture;
         while ((texture = TabulaModelBlock.textures.get("layer" + layer++)) != null) {
-            builder.add(ResourceLocation.parse(texture));
+            builder.add(Identifier.parse(texture));
         }
         String particle = TabulaModelBlock.textures.get("particle");
-        return new VanillaTabulaModel(modelJson, particle != null ? ResourceLocation.parse(particle) : null, builder.build(), PerspectiveMapWrapper.getTransforms(TabulaModelBlock.getAllTransforms()));
+        return new VanillaTabulaModel(modelJson, particle != null ? Identifier.parse(particle) : null, builder.build(), PerspectiveMapWrapper.getTransforms(TabulaModelBlock.getAllTransforms()));
     }
 
    */

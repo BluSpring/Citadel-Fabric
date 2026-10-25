@@ -1,28 +1,29 @@
 package com.github.alexthe666.citadel.server.generation;
 
-import com.github.alexthe666.citadel.Citadel;
-import com.mojang.datafixers.util.Pair;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
-import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class VillageHouseManager {
-    public static final List<ResourceLocation> VILLAGE_REPLACEMENT_POOLS = List.of(
-            ResourceLocation.parse("minecraft:village/plains/houses"),
-            ResourceLocation.parse("minecraft:village/desert/houses"),
-            ResourceLocation.parse("minecraft:village/savanna/houses"),
-            ResourceLocation.parse("minecraft:village/snowy/houses"),
-            ResourceLocation.parse("minecraft:village/taiga/houses"));
-    private static final List<Pair<ResourceLocation, Consumer<StructureTemplatePool>>> REGISTRY = new ArrayList<>();
+import com.github.alexthe666.citadel.Citadel;
+import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-    public static void register(ResourceLocation pool, Consumer<StructureTemplatePool> addToPool) {
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+
+public class VillageHouseManager {
+    public static final List<Identifier> VILLAGE_REPLACEMENT_POOLS = List.of(
+            Identifier.parse("minecraft:village/plains/houses"),
+            Identifier.parse("minecraft:village/desert/houses"),
+            Identifier.parse("minecraft:village/savanna/houses"),
+            Identifier.parse("minecraft:village/snowy/houses"),
+            Identifier.parse("minecraft:village/taiga/houses"));
+    private static final List<Pair<Identifier, Consumer<StructureTemplatePool>>> REGISTRY = new ArrayList<>();
+
+    public static void register(Identifier pool, Consumer<StructureTemplatePool> addToPool) {
         REGISTRY.add(new Pair<>(pool, addToPool));
         Citadel.LOGGER.debug("registered addition to pool: {}", pool);
     }
@@ -48,10 +49,10 @@ public class VillageHouseManager {
 
     public static void addAllHouses(RegistryAccess registryAccess) {
         try {
-            for (ResourceLocation villagePool : VILLAGE_REPLACEMENT_POOLS) {
+            for (Identifier villagePool : VILLAGE_REPLACEMENT_POOLS) {
                 StructureTemplatePool pool = registryAccess.registryOrThrow(Registries.TEMPLATE_POOL).getOptional(villagePool).orElse(null);
                 if (pool != null) {
-                    for (Pair<ResourceLocation, Consumer<StructureTemplatePool>> pair : REGISTRY) {
+                    for (Pair<Identifier, Consumer<StructureTemplatePool>> pair : REGISTRY) {
                         if (villagePool.equals(pair.getFirst())) {
                             pair.getSecond().accept(pool);
                         }

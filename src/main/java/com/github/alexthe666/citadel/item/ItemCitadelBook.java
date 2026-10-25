@@ -16,7 +16,7 @@ public class ItemCitadelBook extends Item {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn) {
+    public InteractionResult use(Level worldIn, Player playerIn, InteractionHand handIn) {
         ItemStack itemStackIn = playerIn.getItemInHand(handIn);
         if (worldIn.isClientSide) {
             Citadel.PROXY.openBookGUI(itemStackIn);

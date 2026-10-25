@@ -2,15 +2,15 @@ package com.github.alexthe666.citadel.client.gui.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record RecipeData(
-    ResourceLocation recipe, boolean shapeless,
+    Identifier recipe, boolean shapeless,
     int x, int y, double scale, int page
 ) {
     public static final Codec<RecipeData> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            ResourceLocation.CODEC
+            Identifier.CODEC
                 .fieldOf("recipe")
                 .forGetter(RecipeData::recipe),
             Codec.BOOL

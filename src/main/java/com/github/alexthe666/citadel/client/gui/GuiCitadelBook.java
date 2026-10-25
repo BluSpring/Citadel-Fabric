@@ -1,7 +1,7 @@
 package com.github.alexthe666.citadel.client.gui;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public class GuiCitadelBook extends GuiBasicBook {
@@ -16,12 +16,12 @@ public class GuiCitadelBook extends GuiBasicBook {
     }
 
     @Override
-    public ResourceLocation getRootPage() {
-        return ResourceLocation.fromNamespaceAndPath("citadel", "book/citadel_book/root.json");
+    public Identifier getRootPage() {
+        return Identifier.fromNamespaceAndPath("citadel", "book/citadel_book/root.json");
     }
 
     @Override
-    public ResourceLocation getTextFileDirectory() {
-        return ResourceLocation.fromNamespaceAndPath("citadel", "book/citadel_book/");
+    public Identifier getTextFileDirectory() {
+        return Identifier.fromNamespaceAndPath("citadel", "book/citadel_book/");
     }
 }

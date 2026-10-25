@@ -7,7 +7,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class CitadelShaderRenderTypes extends RenderType {
 
@@ -24,7 +24,7 @@ public class CitadelShaderRenderTypes extends RenderType {
         super(s, format, mode, i, b1, b2, runnable1, runnable2);
     }
 
-    public static RenderType getRainbowAura(ResourceLocation locationIn) {
+    public static RenderType getRainbowAura(Identifier locationIn) {
         return create("rainbow_aura", DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder()
                 .setShaderState(RENDERTYPE_RAINBOW_AURA_SHADER)
                 .setCullState(NO_CULL)

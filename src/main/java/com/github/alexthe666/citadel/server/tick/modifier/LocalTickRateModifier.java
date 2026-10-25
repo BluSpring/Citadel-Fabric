@@ -2,8 +2,8 @@ package com.github.alexthe666.citadel.server.tick.modifier;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -23,7 +23,7 @@ public abstract class LocalTickRateModifier extends TickRateModifier {
     public CompoundTag toTag() {
         CompoundTag tag = super.toTag();
         tag.putDouble("Range", range);
-        tag.putString("Dimension", dimension.location().toString());
+        tag.putString("Dimension", dimension.identifier().toString());
         return tag;
     }
 
@@ -32,7 +32,7 @@ public abstract class LocalTickRateModifier extends TickRateModifier {
         this.range = tag.getDouble("Range");
         ResourceKey<Level> dimFromTag = Level.OVERWORLD;
         if(tag.contains("Dimension")){
-            dimFromTag = ResourceKey.create(Registries.DIMENSION, ResourceLocation.parse(tag.getString("dimension")));
+            dimFromTag = ResourceKey.create(Registries.DIMENSION, Identifier.parse(tag.getString("dimension")));
         }
         this.dimension = dimFromTag;
     }

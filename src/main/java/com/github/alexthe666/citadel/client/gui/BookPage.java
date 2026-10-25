@@ -1,25 +1,23 @@
 package com.github.alexthe666.citadel.client.gui;
 
-import com.github.alexthe666.citadel.client.gui.data.*;
-import com.google.gson.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import com.github.alexthe666.citadel.client.gui.data.EntityLinkData;
+import com.github.alexthe666.citadel.client.gui.data.EntityRenderData;
+import com.github.alexthe666.citadel.client.gui.data.ImageData;
+import com.github.alexthe666.citadel.client.gui.data.ItemRenderData;
+import com.github.alexthe666.citadel.client.gui.data.LinkData;
+import com.github.alexthe666.citadel.client.gui.data.RecipeData;
+import com.github.alexthe666.citadel.client.gui.data.TabulaRenderData;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.resources.language.I18n;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import org.jetbrains.annotations.Nullable;
-
-import java.io.Reader;
-import java.io.StringReader;
-import java.lang.reflect.Type;
-import java.util.*;
 
 public record BookPage(
     Optional<String> parent, String textFileToReadFrom,

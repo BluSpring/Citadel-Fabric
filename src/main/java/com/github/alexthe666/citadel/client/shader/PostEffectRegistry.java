@@ -1,25 +1,26 @@
 package com.github.alexthe666.citadel.client.shader;
 
-import com.github.alexthe666.citadel.Citadel;
-import com.google.gson.JsonSyntaxException;
-import com.mojang.blaze3d.pipeline.RenderTarget;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.PostChain;
-import net.minecraft.resources.ResourceLocation;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.github.alexthe666.citadel.Citadel;
+import com.google.gson.JsonSyntaxException;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.PostChain;
+import net.minecraft.resources.Identifier;
+
 public class PostEffectRegistry {
 
-    private static List<ResourceLocation> registry = new ArrayList<>();
+    private static List<Identifier> registry = new ArrayList<>();
 
-    private static Map<ResourceLocation, PostEffect> postEffects = new HashMap<>();
+    private static Map<Identifier, PostEffect> postEffects = new HashMap<>();
 
     public static void clear(){
         for(PostEffect postEffect : postEffects.values()){
@@ -28,7 +29,7 @@ public class PostEffectRegistry {
         postEffects.clear();
     }
 
-    public static void registerEffect(ResourceLocation resourceLocation) {
+    public static void registerEffect(Identifier resourceLocation) {
         Citadel.LOGGER.debug("PostEffectRegistry: registering effect {}", resourceLocation);
         registry.add(resourceLocation);
     }
@@ -37,7 +38,7 @@ public class PostEffectRegistry {
         clear();
         Minecraft minecraft = Minecraft.getInstance();
         Citadel.LOGGER.debug("PostEffectRegistry: initializing {} effects", registry.size());
-        for (ResourceLocation resourceLocation : registry) {
+        for (Identifier resourceLocation : registry) {
             PostChain postChain;
             RenderTarget renderTarget;
             try {
@@ -64,12 +65,12 @@ public class PostEffectRegistry {
         }
     }
 
-    public static RenderTarget getRenderTargetFor(ResourceLocation resourceLocation) {
+    public static RenderTarget getRenderTargetFor(Identifier resourceLocation) {
         PostEffect effect = postEffects.get(resourceLocation);
         return effect == null ? null : effect.getRenderTarget();
     }
 
-    public static void renderEffectForNextTick(ResourceLocation resourceLocation) {
+    public static void renderEffectForNextTick(Identifier resourceLocation) {
         PostEffect effect = postEffects.get(resourceLocation);
         if (effect != null) {
             effect.setEnabled(true);

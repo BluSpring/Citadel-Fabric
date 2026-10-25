@@ -14,7 +14,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemDisplayContext;
 
 /**
@@ -35,12 +35,12 @@ public class VanillaTabulaModel implements UnbakedModel {
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies() {
+    public Collection<Identifier> getDependencies() {
         return ImmutableList.of();
     }
 
     @Override
-    public void resolveParents(Function<ResourceLocation, UnbakedModel> p_119538_) {
+    public void resolveParents(Function<Identifier, UnbakedModel> p_119538_) {
 
     }
 
@@ -235,7 +235,7 @@ public class VanillaTabulaModel implements UnbakedModel {
     @Nullable
     @Override
     public IBakedModel bake(ModelBakery bakery, Function spriteGetter, ISprite sprite, VertexFormat format) {
-        TextureAtlasSprite spriteA = (TextureAtlasSprite) spriteGetter.apply(this.textures.isEmpty() ? ResourceLocation.parse("missingno") : this.textures.get(0));
+        TextureAtlasSprite spriteA = (TextureAtlasSprite) spriteGetter.apply(this.textures.isEmpty() ? Identifier.parse("missingno") : this.textures.get(0));
         TextureAtlasSprite particleSprite = this.particle == null ? spriteA : (TextureAtlasSprite) spriteGetter.apply(this.particle);
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         TabulaMatrix matrix = new TabulaMatrix();

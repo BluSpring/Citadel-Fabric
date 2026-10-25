@@ -1,33 +1,34 @@
 package com.github.alexthe666.citadel.config.biome;
 
-import com.github.alexthe666.citadel.Citadel;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.fml.loading.FMLPaths;
-import org.apache.commons.io.FileUtils;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.github.alexthe666.citadel.Citadel;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.neoforged.fml.loading.FMLPaths;
+import org.apache.commons.io.FileUtils;
+
+import net.minecraft.resources.Identifier;
+
 public class SpawnBiomeConfig {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(SpawnBiomeData.class, new SpawnBiomeData.Deserializer()).create();
-    private final ResourceLocation fileName;
+    private final Identifier fileName;
 
-    private SpawnBiomeConfig(ResourceLocation fileName) {
+    private SpawnBiomeConfig(Identifier fileName) {
         if (!fileName.getNamespace().endsWith(".json")) {
-            this.fileName = ResourceLocation.fromNamespaceAndPath(fileName.getNamespace(), fileName.getPath() + ".json");
+            this.fileName = Identifier.fromNamespaceAndPath(fileName.getNamespace(), fileName.getPath() + ".json");
         } else {
             this.fileName = fileName;
         }
 
     }
 
-    public static SpawnBiomeData create(ResourceLocation fileName, SpawnBiomeData dataDefault) {
+    public static SpawnBiomeData create(Identifier fileName, SpawnBiomeData dataDefault) {
         SpawnBiomeConfig config = new SpawnBiomeConfig(fileName);
         return config.getConfigData(dataDefault);
     }

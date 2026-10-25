@@ -2,19 +2,19 @@ package com.github.alexthe666.citadel.client.gui.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record TabulaRenderData(
-    ResourceLocation model, ResourceLocation texture,
+    Identifier model, Identifier texture,
     int x, int y, double scale, int page,
     double rotX, double rotY, double rotZ, boolean followCursor
 ) {
     public static final Codec<TabulaRenderData> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            ResourceLocation.CODEC
+            Identifier.CODEC
                 .fieldOf("model")
                 .forGetter(TabulaRenderData::model),
-            ResourceLocation.CODEC
+            Identifier.CODEC
                 .fieldOf("texture")
                 .forGetter(TabulaRenderData::texture),
             Codec.INT

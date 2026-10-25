@@ -2,10 +2,10 @@ package com.github.alexthe666.citadel.client.gui.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record ImageData(
-    ResourceLocation texture,
+    Identifier texture,
     int x,
     int y,
     int page,
@@ -17,7 +17,7 @@ public record ImageData(
 ) {
     public static final Codec<ImageData> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            ResourceLocation.CODEC
+            Identifier.CODEC
                 .fieldOf("texture")
                 .forGetter(ImageData::texture),
             Codec.INT
