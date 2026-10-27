@@ -1,6 +1,6 @@
 package com.github.alexthe666.citadel.server.block;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.github.alexthe666.citadel.Citadel;
 

@@ -5,7 +5,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.Type;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

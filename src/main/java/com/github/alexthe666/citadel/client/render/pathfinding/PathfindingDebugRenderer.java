@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NotNull;
 import org.joml.Matrix4f;
 
 import java.util.ConcurrentModificationException;

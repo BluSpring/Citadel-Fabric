@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.PathfindingContext;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NotNull;
 
 public class CustomCollisionsNodeProcessor extends WalkNodeEvaluator {
 

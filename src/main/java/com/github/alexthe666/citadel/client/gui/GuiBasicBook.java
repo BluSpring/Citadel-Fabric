@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.client.gui.data.EntityLinkData;

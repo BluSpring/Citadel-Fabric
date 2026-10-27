@@ -6,7 +6,7 @@ package com.github.alexthe666.citadel.server.entity.pathfinding.raycoms;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.github.alexthe666.citadel.Citadel;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.AbstractPathJob;
@@ -14,7 +14,7 @@ import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.PathJobMoveToLocation;
 import com.github.alexthe666.citadel.server.entity.pathfinding.raycoms.pathjobs.PathJobRandomPos;
 import com.github.alexthe666.citadel.server.world.WorldChunkUtil;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NotNull;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

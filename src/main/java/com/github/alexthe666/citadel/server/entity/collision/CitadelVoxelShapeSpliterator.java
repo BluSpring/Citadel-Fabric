@@ -6,7 +6,7 @@ import java.util.Spliterators;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Cursor3D;

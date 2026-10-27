@@ -31,9 +31,9 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 
@@ -217,7 +217,7 @@ public class ChunkCache implements LevelReader {
     }
 
     @Override
-    public List<VoxelShape> getEntityCollisions(@org.jetbrains.annotations.Nullable final Entity p_186427_, final AABB p_186428_) {
+    public List<VoxelShape> getEntityCollisions(@org.jspecify.annotations.Nullable final Entity p_186427_, final AABB p_186428_) {
         return null;
     }
 

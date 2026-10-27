@@ -1,6 +1,6 @@
 package com.github.alexthe666.citadel.server.entity.collision;
 
-import javax.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import com.google.common.collect.AbstractIterator;
 
